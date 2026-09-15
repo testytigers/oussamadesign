@@ -1,0 +1,38 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Category this page belongs to — "Case study", "Workshop", "Events". */
+  eyebrow?: string;
+  title: string;
+  /** Renders the shared back link above the eyebrow. */
+  back?: { href: string; label: string };
+}
+
+const { eyebrow, title, back } = Astro.props;
+const hasMedia = Astro.slots.has('media');
+---
+
+<header class:list={['page-header', back && 'has-back', hasMedia && 'has-media']}>
+  <div class="folio-container">
+    <div class="page-header-grid">
+      <div class="page-header-text">
+        {back && (
+          <a class="back-link" href={back.href}>
+            <Icon name="arrow-left" />
+            {back.label}
+          </a>
+        )}
+        {eyebrow && <p class="micro-label">{eyebrow}</p>}
+        <h1>{title}</h1>
+        <slot />
+      </div>
+
+      {hasMedia && (
+        <div class="page-header-media">
+          <slot name="media" />
+        </div>
+      )}
+    </div>
+  </div>
+</header>

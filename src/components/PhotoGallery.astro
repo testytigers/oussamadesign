@@ -1,0 +1,376 @@
+---
+import Icon from './Icon.astro';
+
+export interface Photo {
+  /** File stem: <base>/<slug>.webp and <base>/<slug>-thumb.webp */
+  slug: string;
+  /** Intrinsic size of the full image, for aspect-ratio reservation. */
+  w: number;
+  h: number;
+  caption: string;
+  alt: string;
+}
+
+interface Props {
+  /** Directory the photos live in, e.g. "/events/foo". */
+  base: string;
+  photos: Photo[];
+}
+
+const { base, photos } = Astro.props;
+---
+
+<div class="mosaic-gallery" data-gallery>
+  {photos.map((photo, i) => (
+    <button type="button" class="mosaic-item" data-index={i} data-ratio={(photo.h / photo.w).toFixed(4)}>
+      <img
+        src={`${base}/${photo.slug}-thumb.webp`}
+        alt={photo.alt}
+        width={photo.w}
+        height={photo.h}
+        loading={i < 4 ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+      <span class="mosaic-overlay"><span class="mosaic-caption">{photo.caption}</span></span>
+    </button>
+  ))}
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button type="button" class="lightbox-btn lightbox-close" aria-label="Close"><Icon name="close" /></button>
+  <button type="button" class="lightbox-btn lightbox-prev" aria-label="Previous photo"><Icon name="arrow-left" /></button>
+  <button type="button" class="lightbox-btn lightbox-next" aria-label="Next photo"><Icon name="arrow-right" /></button>
+
+  <figure class="lightbox-content">
+    <img class="lightbox-image" src="" alt="" />
+    <figcaption class="lightbox-meta">
+      <span class="lightbox-caption"></span>
+      <span class="lightbox-counter"></span>
+    </figcaption>
+  </figure>
+</div>
+
+<script is:inline define:vars={{ photos, BASE: base }}>
+    (() => {
+      /* --- Masonry columns -------------------------------------------------
+         CSS multi-column balances by height, so a short gallery collapses into
+         fewer columns than declared (9 equal-height photos pack 3+3+3 and leave
+         the 4th empty). Distribute explicitly instead: shortest column first,
+         using each photo's aspect ratio as its relative height. Falls back to
+         the CSS `columns` rule if this never runs. */
+      const gallery = document.querySelector('[data-gallery]');
+      const ordered = [...gallery.querySelectorAll('.mosaic-item')];
+
+      const columnsFor = (w) => (w <= 460 ? 1 : w <= 760 ? 2 : w <= 1100 ? 3 : 4);
+      let laidOutFor = 0;
+
+      const layout = () => {
+        const n = columnsFor(window.innerWidth);
+        if (n === laidOutFor) return;
+        laidOutFor = n;
+
+        gallery.classList.add('is-distributed');
+        gallery.style.setProperty('--mosaic-cols', n);
+        gallery.replaceChildren();
+
+        const cols = Array.from({ length: n }, () => {
+          const col = document.createElement('div');
+          col.className = 'mosaic-col';
+          gallery.append(col);
+          return { el: col, height: 0 };
+        });
+
+        for (const item of ordered) {
+          const shortest = cols.reduce((a, b) => (b.height < a.height ? b : a));
+          shortest.el.append(item);
+          shortest.height += Number(item.dataset.ratio) || 1;
+        }
+      };
+
+      layout();
+      window.addEventListener('resize', layout);
+
+      const lightbox = document.querySelector('[data-lightbox]');
+      const image = lightbox.querySelector('.lightbox-image');
+      const caption = lightbox.querySelector('.lightbox-caption');
+      const counter = lightbox.querySelector('.lightbox-counter');
+      /* `ordered` keeps the authored order; DOM order is column-major after
+         distribution, so indexes must come from data-index, not position. */
+      const items = ordered;
+
+      let index = 0;
+      let lastFocused = null;
+
+      /* Keep the neighbours warm so left/right feels instant. */
+      const preload = (i) => {
+        const p = photos[(i + photos.length) % photos.length];
+        new Image().src = `${BASE}/${p.slug}.webp`;
+      };
+
+      const show = (i) => {
+        index = (i + photos.length) % photos.length;
+        const photo = photos[index];
+        image.src = `${BASE}/${photo.slug}.webp`;
+        image.alt = photo.alt;
+        caption.textContent = photo.caption;
+        counter.textContent = `${index + 1} / ${photos.length}`;
+        preload(index + 1);
+        preload(index - 1);
+      };
+
+      const open = (i) => {
+        lastFocused = document.activeElement;
+        show(i);
+        lightbox.classList.add('active');
+        document.documentElement.classList.add('lightbox-open');
+        document.body.style.overflow = 'hidden';
+        lightbox.querySelector('.lightbox-close').focus();
+      };
+
+      const close = () => {
+        lightbox.classList.remove('active');
+        document.documentElement.classList.remove('lightbox-open');
+        document.body.style.overflow = '';
+        if (lastFocused) lastFocused.focus();
+      };
+
+      items.forEach((item) => item.addEventListener('click', () => open(Number(item.dataset.index))));
+
+      lightbox.querySelector('.lightbox-close').addEventListener('click', close);
+      lightbox.querySelector('.lightbox-prev').addEventListener('click', () => show(index - 1));
+      lightbox.querySelector('.lightbox-next').addEventListener('click', () => show(index + 1));
+
+      /* Clicking the backdrop closes; clicking the photo or a control does not. */
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-content')) close();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowLeft') show(index - 1);
+        else if (e.key === 'ArrowRight') show(index + 1);
+        else return;
+        e.preventDefault();
+      });
+
+      /* Swipe left/right on touch devices. */
+      let startX = null;
+      lightbox.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].clientX; }, { passive: true });
+      lightbox.addEventListener('touchend', (e) => {
+        if (startX === null) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+        startX = null;
+      }, { passive: true });
+    })();
+</script>
+
+<style>
+  /* Masonry columns rather than a fixed grid — these are phone photos in mixed
+     orientations, and cropping them all to one ratio wrecks the framing. */
+  /* No-JS fallback: multi-column. It may use fewer columns than declared when
+     the gallery is short, but every photo still shows. */
+  .mosaic-gallery {
+    columns: 4;
+    column-gap: 14px;
+  }
+
+  @media (max-width: 1100px) { .mosaic-gallery { columns: 3; } }
+  @media (max-width: 760px) { .mosaic-gallery { columns: 2; } }
+  @media (max-width: 460px) { .mosaic-gallery { columns: 1; } }
+
+  /* Once distributed, the column count is exact at every width. */
+  .mosaic-gallery.is-distributed {
+    columns: auto;
+    display: grid;
+    grid-template-columns: repeat(var(--mosaic-cols, 4), minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .mosaic-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .is-distributed .mosaic-item {
+    margin: 0;
+  }
+
+  .mosaic-item {
+    display: block;
+    width: 100%;
+    margin: 0 0 14px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card-bg);
+    cursor: pointer;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+  }
+
+  .mosaic-item:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .mosaic-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    transition: transform 0.5s ease;
+  }
+
+  .mosaic-item:hover img {
+    transform: scale(1.04);
+  }
+
+  .mosaic-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0) 55%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .mosaic-item:hover .mosaic-overlay,
+  .mosaic-item:focus-visible .mosaic-overlay {
+    opacity: 1;
+  }
+
+  .mosaic-caption {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #fff;
+    text-align: left;
+  }
+
+/* ===== Lightbox ===== */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    /* Blurred rather than merely dark, so the sticky header behind it doesn't
+       stay legible through the backdrop. */
+    background: rgba(5, 10, 7, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    justify-content: center;
+    align-items: center;
+    padding: 72px 20px 88px;
+  }
+
+  .lightbox.active { display: flex; }
+
+  .lightbox-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+  }
+
+  .lightbox-image {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 210px);
+    width: auto;
+    margin: 0;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+
+  .lightbox-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .lightbox-counter {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Controls */
+  .lightbox-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .lightbox-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .lightbox-btn:focus-visible {
+    outline: 2px solid var(--footer-accent);
+    outline-offset: 2px;
+  }
+
+  .lightbox-btn :global(.icon) {
+    width: 19px;
+    height: 19px;
+  }
+
+  .lightbox-close { top: 18px; right: 18px; }
+  .lightbox-prev { left: 18px; top: 50%; transform: translateY(-50%); }
+  .lightbox-next { right: 18px; top: 50%; transform: translateY(-50%); }
+
+  .lightbox-prev:hover { transform: translateY(-50%) translateX(-4px); }
+  .lightbox-next:hover { transform: translateY(-50%) translateX(4px); }
+
+  @media (max-width: 700px) {
+    .lightbox { padding: 64px 12px 96px; }
+
+    /* Thumb-reachable on a phone: both arrows sit at the bottom. */
+    .lightbox-prev,
+    .lightbox-next {
+      top: auto;
+      bottom: 22px;
+      transform: none;
+    }
+
+    .lightbox-prev { left: calc(50% - 60px); }
+    .lightbox-next { right: calc(50% - 60px); }
+    .lightbox-prev:hover { transform: translateX(-4px); }
+    .lightbox-next:hover { transform: translateX(4px); }
+
+    .lightbox-image { max-height: calc(100vh - 230px); }
+  }
+</style>

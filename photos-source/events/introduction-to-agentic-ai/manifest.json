@@ -1,0 +1,97 @@
+[
+  {
+    "slug": "group-photo",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "slug": "setup",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "slug": "whats-the-difference",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "explaining-agents",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "full-room",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "live-presentation",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "walkthrough",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "hermes-architecture",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "attendees",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "audience-engagement",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "open-floor",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "interactive-session",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "qa-session",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "discussion",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "llm-vs-agents",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "from-the-back",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "after-session",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "quick-recap",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "venue",
+    "width": 720,
+    "height": 1280
+  }
+]

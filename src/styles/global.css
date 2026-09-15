@@ -1,0 +1,1025 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: 'Poppins', sans-serif;
+  --font-bricolage: 'Bricolage Grotesque', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ============ THEME TOKENS ============ */
+/* Light is the default. Dark is an opt-in feature toggled via [data-theme="dark"]. */
+:root {
+  --bg: #F6FAF3;
+  --bg-elevated: #FFFFFF;
+  --hero-bg: #E9F4E4;
+  --text: #14201A;
+  --text-muted: #5B6B60;
+  --border: #DDE8D9;
+  --accent: #1E8E52;
+  --accent-strong: #146B3E;
+  --card-bg: #FFFFFF;
+  --footer-bg: #07130D;
+  --footer-gradient: radial-gradient(80% 90% at 50% 0%, #1A5E3A 0%, #0C2318 45%, #07130D 80%);
+  --footer-text: #F1FBF2;
+  --footer-accent: #4ADE80;
+  --footer-border: #1B3325;
+  --footer-border-strong: #2A4C37;
+  --footer-muted: #9CB3A5;
+  --header-bg: rgba(246, 250, 243, 0.85);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0A0F0B;
+  --bg-elevated: #10160F;
+  --hero-bg: #0E1712;
+  --text: #EFF5EF;
+  --text-muted: #93A199;
+  --border: #212A21;
+  --accent: #4ADE80;
+  --accent-strong: #6FEBA0;
+  --card-bg: #10160F;
+  --footer-bg: #050A07;
+  --footer-gradient: radial-gradient(80% 90% at 50% 0%, #11482C 0%, #091B12 45%, #050A07 80%);
+  --footer-text: #EAF9EC;
+  --footer-accent: #4ADE80;
+  --footer-border: #16281D;
+  --footer-border-strong: #23412F;
+  --footer-muted: #8FA79A;
+  --header-bg: rgba(10, 15, 11, 0.85);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  width: 100%;
+  letter-spacing: .3px;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 130%;
+  font-weight: 700;
+  letter-spacing: .3px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  color: var(--text);
+}
+
+h1 { font-size: 2.4rem; margin-bottom: 20px; }
+h2 { font-size: 1.9rem; margin-bottom: 20px; }
+h3 { font-size: 1.4rem; margin-bottom: 10px; }
+h4 { font-size: 1.1rem; margin-bottom: 10px; }
+h5 { font-size: 1rem; margin-bottom: 10px; }
+h6 { font-size: 0.9rem; margin-bottom: 4px; }
+
+p, span, li {
+  line-height: 170%;
+  margin: 0 0 16px;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ============ UTILITIES ============ */
+.icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+.folio-container {
+  width: 1080px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .folio-container { padding: 0 40px; }
+}
+
+@media (min-width: 1280px) {
+  .folio-container { max-width: 1080px; }
+}
+
+.text-link {
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.text-link .icon {
+  transition: transform 0.25s ease;
+}
+
+.text-link:hover {
+  opacity: 1;
+}
+
+.text-link:hover .icon {
+  transform: translateX(12px);
+}
+
+/* Micro label — mono, uppercase, wide tracking */
+.micro-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+/* Minimal inline arrow — blends with the text it follows.
+   `margin: 0` is required: the global `span` rule adds a 16px bottom margin,
+   which shifts the arrow ~8px above the text inside a centred flex row. */
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin: 0;
+  color: inherit;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), color 0.25s ease;
+}
+
+.arrow .icon {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* Back link — one treatment for every "up a level" navigation */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 30px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: color 0.25s ease, transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.back-link .icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.back-link:hover {
+  opacity: 1;
+  color: var(--accent);
+  transform: translateX(-4px);
+}
+
+.back-link:hover .icon {
+  transform: translateX(-6px);
+}
+
+/* Pill buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.btn:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.btn .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 25px;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.card img {
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+/* Section rhythm */
+section {
+  width: 100%;
+  padding: 90px 0;
+}
+
+@media (max-width: 767px) {
+  section { padding: 56px 0; }
+}
+
+/* Section heading — the single treatment for every in-page section title,
+   on the home page and inside case studies alike. */
+.section-head {
+  max-width: 58ch;
+  margin-bottom: 42px;
+}
+
+.section-head h2 {
+  font-size: clamp(1.5rem, 2.9vw, 2.05rem);
+  line-height: 118%;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.section-head .micro-label {
+  margin-bottom: 12px;
+}
+
+.section-lede {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 175%;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 767px) {
+  .section-head { margin-bottom: 30px; }
+}
+
+/* ============ HEADER ============ */
+.site-header {
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.25s ease;
+}
+
+/* The photo viewer is fullscreen — the sticky header must not peek through it. */
+:root.lightbox-open .site-header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .site-header { padding: 18px 40px; }
+}
+
+.site-header .logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-header .logo-mark img {
+  width: 34px;
+  height: 34px;
+  display: block;
+  object-fit: cover;
+  transform: rotate(10deg);
+  margin-right: 4px;
+}
+
+.site-header .logo-mark span {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.25s ease;
+}
+
+.nav-toggle:hover {
+  border-color: var(--accent);
+}
+
+.nav-toggle span {
+  display: block;
+  flex: none;
+  width: 16px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@media (max-width: 767px) {
+  .nav-toggle { display: flex; order: 2; }
+  .header-right { order: 1; }
+
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 20px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  }
+
+  .nav-links.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* ============ PAGE HEADER ============ */
+/* Every page opens with this exact block, in this exact order:
+   back link → eyebrow → title → lede → meta. Nothing else. */
+.page-header {
+  background: var(--hero-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 76px 0 66px;
+}
+
+/* A back link already supplies visual top padding, so the block tightens up. */
+.page-header.has-back {
+  padding-top: 34px;
+}
+
+/* Two columns only when a media slot is filled; otherwise the text keeps the
+   full measure it had before. */
+.page-header-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.page-header.has-media .page-header-grid {
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  align-items: end;
+}
+
+.page-header.has-media {
+  /* The figure is pulled down onto the section's bottom edge, so anything
+     that overshoots must be clipped rather than bleed into the next section. */
+  overflow: hidden;
+}
+
+.page-header-media {
+  align-self: end;
+  justify-self: end;
+}
+
+.page-header-media img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 440px;
+  margin: 0 0 -66px;
+}
+
+/* Stacked, but still sitting on the section's bottom edge. The negative
+   margin has to match .page-header's bottom padding, which changes at 767px. */
+@media (max-width: 900px) {
+  .page-header.has-media .page-header-grid {
+    /* minmax(0, 1fr), never a bare 1fr: the auto minimum lets the track grow
+       to the lede's 58ch measure and overflow the container. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+
+  .page-header-media {
+    justify-self: center;
+  }
+
+  .page-header-media img {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-header-media img {
+    max-height: 280px;
+    margin-bottom: -46px;
+  }
+}
+
+.page-header h1 {
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  line-height: 110%;
+  letter-spacing: -0.015em;
+  max-width: 20ch;
+  margin: 0;
+}
+
+.page-header .micro-label {
+  margin-bottom: 14px;
+}
+
+.page-lede {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 180%;
+  max-width: 58ch;
+  margin: 20px 0 0;
+}
+
+.page-lede a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.page-header .media-chips {
+  margin: 28px 0 0;
+}
+
+@media (max-width: 767px) {
+  .page-header { padding: 52px 0 46px; }
+  .page-header.has-back { padding-top: 26px; }
+  .back-link { margin-bottom: 24px; }
+}
+
+/* Infinite logo marquee.
+   Width is pinned to the lede's measure (58ch at the lede's own font-size) so
+   the strip never runs wider than the paragraph above it. */
+.logo-marquee {
+  position: relative;
+  max-width: 58ch;
+  font-size: 1.05rem;
+  margin-top: 34px;
+  overflow: hidden;
+  /* Soft edges, so logos enter and leave instead of being chopped off. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+
+.logo-track {
+  display: flex;
+  width: max-content;
+  animation: logo-scroll 42s linear infinite;
+}
+
+.logo-marquee:hover .logo-track {
+  animation-play-state: paused;
+}
+
+.logo-group {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 44px;
+  /* Matches the gap, so the seam between the two passes is invisible. */
+  padding: 0 44px 0 0;
+  margin: 0;
+  list-style: none;
+}
+
+.logo-group li {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 0;
+}
+
+/* One monochrome treatment for the whole strip. The source logos run from
+   white-on-dark (Gentis, which vanished on the light hero) through gold and
+   red, so brand colours read as noise at 24px — and one of them disappeared. */
+.logo-group img {
+  height: var(--logo-h, 24px);
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  /* Grayscale rather than a flat silhouette: it keeps the detail inside the
+     federation crests while still darkening the white wordmark enough to read. */
+  filter: grayscale(1) brightness(var(--logo-dim, 0.55)) contrast(1.15);
+  opacity: 0.62;
+  transition: opacity 0.3s ease;
+}
+
+.logo-marquee:hover .logo-group img {
+  opacity: 0.8;
+}
+
+/* The track holds exactly two identical passes, so -50% is one full pass. */
+@keyframes logo-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Inverting luminance would hide the pale logos, so dark mode uses flat white
+   silhouettes — the one treatment that keeps every logo visible on a dark ground. */
+:root[data-theme="dark"] .logo-group img {
+  filter: brightness(0) invert(1);
+  opacity: 0.62;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .logo-track {
+    width: auto;
+    animation: none;
+  }
+
+  .logo-group {
+    flex-wrap: wrap;
+    row-gap: 22px;
+    padding-right: 0;
+  }
+
+  .logo-group[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* ============ MEDIA ROW (case studies + events) ============ */
+.media-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.media-row {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  background: var(--card-bg);
+  overflow: hidden;
+  color: var(--text);
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+
+a.media-row:hover {
+  opacity: 1;
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.media-row-media {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+}
+
+.media-row-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  transition: transform 0.6s ease;
+}
+
+a.media-row:hover .media-row-media img {
+  transform: scale(1.05);
+}
+
+.media-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #0B1710;
+  color: #F1FBF2;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.media-row-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 46px 48px;
+}
+
+.media-row-body h3 {
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  margin-bottom: 14px;
+}
+
+.media-desc {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-bottom: 24px;
+  max-width: 46ch;
+}
+
+.media-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.chip {
+  margin: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.media-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 0.98rem;
+}
+
+a.media-row:hover .arrow {
+  transform: translateX(14px);
+}
+
+/* Cards without a CTA end on their description — don't leave its trailing gap. */
+.media-row-body > :last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 860px) {
+  .media-row {
+    grid-template-columns: 1fr;
+    border-radius: 22px;
+  }
+
+  .media-row-media {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .media-row-body {
+    padding: 28px 24px 30px;
+  }
+}
+
+/* ============ JOURNAL LIST ============ */
+.journal-list {
+  border-top: 1px solid var(--border);
+}
+
+.journal-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 26px;
+  padding: 26px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  transition: background 0.3s ease;
+}
+
+.journal-row:hover {
+  opacity: 1;
+  background: var(--bg-elevated);
+}
+
+.journal-row .arrow {
+  color: var(--text-muted);
+}
+
+.journal-index {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.journal-row h4 {
+  font-size: 1.15rem;
+  margin-bottom: 5px;
+  transition: color 0.25s ease;
+}
+
+.journal-row p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.journal-row:hover h4 { color: var(--accent); }
+
+.journal-row:hover .arrow {
+  color: var(--accent);
+  transform: translateX(14px);
+}
+
+@media (max-width: 767px) {
+  .journal-row {
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    padding: 22px 12px;
+  }
+}
+
+/* ============ FOOTER ============ */
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background: var(--footer-bg);
+  background-image: var(--footer-gradient);
+  color: var(--footer-text);
+  padding: 46px 20px 26px;
+  margin-top: 40px;
+}
+
+.footer-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding-bottom: 46px;
+  margin-bottom: 56px;
+  border-bottom: 1px solid var(--footer-border);
+}
+
+.footer-cta-text {
+  flex: 1 1 360px;
+}
+
+.footer-cta .micro-label {
+  color: var(--footer-accent);
+}
+
+.footer-cta h2 {
+  color: var(--footer-text);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  line-height: 118%;
+  margin-bottom: 0;
+}
+
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 767px) {
+  .footer-cta {
+    gap: 22px;
+    padding-bottom: 36px;
+    margin-bottom: 44px;
+  }
+
+  .footer-actions {
+    justify-content: flex-start;
+  }
+}
+
+.btn-primary {
+  background: var(--footer-text);
+  color: var(--footer-bg);
+}
+
+.btn-ghost {
+  border-color: var(--footer-border-strong);
+  color: var(--footer-text);
+}
+
+.btn-ghost:hover {
+  border-color: var(--footer-text);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 40px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid var(--footer-border);
+}
+
+@media (max-width: 860px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 34px;
+  }
+}
+
+.footer-col .micro-label {
+  color: var(--footer-muted);
+}
+
+.footer-col a,
+.footer-col p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--footer-text);
+  font-size: 0.93rem;
+  margin: 0 0 12px;
+}
+
+.footer-col a:hover {
+  opacity: 1;
+  color: var(--footer-accent);
+}
+
+.footer-brand .footer-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--footer-text);
+  margin-bottom: 14px;
+}
+
+.footer-brand .footer-wordmark img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  transform: rotate(10deg);
+}
+
+.footer-brand p {
+  color: var(--footer-muted);
+  font-size: 0.93rem;
+  max-width: 260px;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 26px;
+  font-size: 0.78rem;
+  color: var(--footer-muted);
+}
+
+.footer-bottom p { margin: 0; }
+
+.footer-bottom .footer-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--footer-border-strong);
+  color: var(--footer-text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.footer-socials a:hover {
+  opacity: 1;
+  background: var(--footer-text);
+  color: var(--footer-bg);
+}
+
+.footer-socials svg { width: 15px; height: 15px; }
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,446 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+
+const results = [
+  { metric: 'Candidate dropout', before: '40%', after: '12%', impact: '70% friction reduction' },
+  { metric: 'Scheduling speed', before: '3 days', after: '~15 mins', impact: '90% cycle reduction' },
+  { metric: 'Operational ROI', before: '5 hrs/wk', after: '< 1 hr/wk', impact: '20 hrs saved / month' },
+  { metric: 'Hiring speed (TTF)', before: '50 days', after: '35 days', impact: '30% faster hiring' },
+  { metric: 'Rescheduling rate', before: '23%', after: '6%', impact: 'Significant UX improvement' },
+];
+---
+
+<Layout
+  title="Wiggli Calendar UX Case Study | Oussama Bougnouch"
+  description="How collaborative scheduling cut candidate dropout from 40% to 12% and reduced scheduling time from 3 days to 15 minutes."
+  image="/images/work/cal-view.png">
+
+  <Header />
+
+  <PageHeader
+    eyebrow="Case study"
+    title="Centralizing the hiring process through collaborative scheduling"
+    back={{ href: '/#work', label: 'Back to work' }}>
+    <p class="page-lede">
+      UX Designer at Wiggli — scheduling efficiency, team coordination, and tool consolidation.
+    </p>
+    <div class="media-chips">
+      <span class="chip">Dropout 40% → 12%</span>
+      <span class="chip">3 days → 15 min</span>
+      <span class="chip">50+ active recruiters</span>
+    </div>
+  </PageHeader>
+
+  <article>
+    <div class="folio-container">
+      <figure class="cs-figure wide">
+        <img src="/images/work/cal-view.png" alt="Wiggli collaborative scheduling calendar interface showing weekly view with interview events, Collaborative Groups panel, and team availability across multiple recruiters" />
+      </figure>
+    </div>
+
+    <!-- DISCOVERY -->
+    <section class="cs-section">
+      <div class="cs-body">
+        <header class="section-head">
+          <p class="micro-label">01 — Discovery</p>
+          <h2>Identifying fragmented communication causing a 40% candidate dropout rate</h2>
+        </header>
+        <p>
+          In professional recruitment, speed is the only competitive advantage. At Gentis/Wiggli, we identified a
+          critical failure in our production line: 40% of candidates were dropping out during the scheduling phase.
+        </p>
+        <p>
+          This wasn't just a "UX friction" issue; it was a massive financial leak. Every abandoned candidate
+          represented thousands of dollars in wasted sourcing spend (CAC) and lost potential revenue. The process was
+          manual, fragmented, and prone to human error. A recruiter would spend weeks sourcing a high-level "unicorn"
+          candidate, only to lose them during a 3-day "email ping-pong" session.
+        </p>
+
+        <h3>Internal research &amp; surveys</h3>
+        <ul>
+          <li>
+            <strong>Quantitative:</strong> I used Mixpanel funnel analysis to track the candidate journey. The data was
+            startling: 40% of candidates who reached the "Invite to Interview" stage never actually booked a slot. The
+            drop-off happened exactly at the transition between the recruiter's email and the calendar view.
+          </li>
+          <li>
+            <strong>Qualitative:</strong> To define the scope, I conducted a survey with 23 Hiring Managers at Gentis.
+            This was supplemented by a deep-dive interview with 4 Hiring Managers from different experience levels,
+            including Sarra, a Sr. Hiring Manager with 8+ years of experience, to map the current journey.
+          </li>
+        </ul>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/journey-map.png" alt="Service blueprint mapping the 6-stage hiring journey — Initiate, Check Availability, Align Schedules, Propose Interview, Await Response, Confirm Interview — with actions, feelings, pain points and opportunities per stage" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>The core problems identified</h3>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/problem.png" alt="Diagram illustrating multi-party scheduling chaos: candidate, two interviewers and hiring manager exchanging conflicting time slots across email and messaging apps, causing 3-day booking delays" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <ul>
+          <li><strong>Communication delays:</strong> The "ping-pong" between interviewers and candidates led to slow response times and necessitated frequent manual reminders.</li>
+          <li><strong>Schedule misalignment:</strong> Coordinating multiple interviewers without a unified view led to constant conflicts and rescheduling.</li>
+          <li><strong>Tool fragmentation:</strong> Recruiters were forced to use Slack, Email, WhatsApp, and phone calls simultaneously, leading to confusion and high risk of miscommunication.</li>
+          <li><strong>The legacy UI limitation:</strong> The old design only allowed proposing a single time slot, which was the primary driver of high rescheduling rates and candidate frustration.</li>
+          <li><strong>Timezone paralysis:</strong> For international teams, calculating offsets across GMT, EST, and CET led to frequent manual errors and wasted executive hours.</li>
+          <li><strong>Cognitive load:</strong> Recruiters were acting as manual "data routers," spending 5+ hours a week just moving calendar slots around.</li>
+        </ul>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/old-experience.gif" alt="Screen recording of the legacy Wiggli interview scheduling UI, showing the limitation of proposing only a single time slot — the root cause of 40% candidate dropout" />
+          <figcaption>The old design only allowed proposing a single time slot, which led to communication issues and increased the rescheduling rate.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section class="cs-section">
+      <div class="cs-body">
+        <header class="section-head">
+          <p class="micro-label">02 — Solution</p>
+          <h2>Collaborative Groups &amp; smart scheduling</h2>
+        </header>
+        <p>
+          Based on the research, I developed a new user flow and concept centred around "Collaborative Groups" to
+          streamline the scheduling process.
+        </p>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/user-flow.png" alt="End-to-end user flow diagram for the redesigned Wiggli scheduling system covering Interview creation, Event setup, New Collaborative Group, Join Group, and Calendar Sync decision trees" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>Collaborative Groups</h3>
+        <p>
+          I designed a system where hiring teams can join a specific group for a vacancy. This centralizes the feedback
+          loop and ensures that all stakeholders have the same view of the candidate's progress and the team's
+          availability.
+        </p>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/collaborative-groups.png" alt="Wiggli Collaborative Groups feature UI — showing the Join Group permission modal alongside the shared calendar view where all team members' availability is visible in a unified weekly layout" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>"Find the Best Times" engine</h3>
+        <p>A logic layer that automates multi-participant scheduling math:</p>
+        <ul>
+          <li><strong>Normalization:</strong> Syncs disparate Google/Outlook data into a unified UTC 15-minute grid.</li>
+          <li><strong>Privacy-first constraints:</strong> Consumes "Busy" blocks only, respecting global working hours and mandatory buffers.</li>
+          <li><strong>Multi-user intersection:</strong> Overlays all participant calendars to identify the "Golden Window" of shared availability.</li>
+          <li><strong>Smart filtering:</strong> Automatically discards "time fragments" — gaps technically free but too short for the required interview duration.</li>
+        </ul>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/find-best.png" alt="Multi-timezone availability intersection diagram showing how the Find Best Times engine identifies 1.8 hours of shared open slots within a 4-hour common work window across Interviewer in NYC (GMT-4), Interviewer in London (GMT+0), and Candidate in Cairo (GMT+2)" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>Flexible calendar architecture</h3>
+        <p>I designed three distinct views to cater to different planning needs:</p>
+        <ul>
+          <li><strong>Daily:</strong> For granular, hour-by-hour scheduling.</li>
+          <li><strong>Weekly:</strong> For mid-term planning.</li>
+          <li><strong>Monthly:</strong> For a high-level overview of hiring volume.</li>
+        </ul>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/calendar-views.png" alt="Three Wiggli calendar layout variants side by side — Daily view for hour-by-hour scheduling, Weekly view for mid-term planning, and Monthly view for high-level hiring volume overview" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>Sync &amp; real-time alignment</h3>
+        <p>
+          I ensured the sync feature provided instant updates across all connected calendars (Google/Outlook), keeping
+          internal teams perfectly aligned and eliminating double-booking errors.
+        </p>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/calendar-settings.png" alt="Wiggli Calendar Settings screen showing Google and Outlook sync configuration, Collaborative Groups management panel, and granular member permission controls (See Event Names, See Only Free/Busy)" />
+        </figure>
+      </div>
+
+      <div class="cs-body">
+        <h3>The notification ecosystem</h3>
+        <p>
+          Implemented automated SMS and email triggers for 24-hour and 1-hour pre-interview windows, with the option of
+          adding multiple reminders, reducing no-shows by 46%.
+        </p>
+      </div>
+    </section>
+
+    <!-- ADOPTION -->
+    <section class="cs-section">
+      <div class="cs-body">
+        <header class="section-head">
+          <p class="micro-label">03 — Adoption</p>
+          <h2>Adoption &amp; change management</h2>
+        </header>
+        <ul>
+          <li><strong>Contextual onboarding:</strong> Designed a just-in-time onboarding guide with contextual tooltips to flatten the learning curve without forced manuals.</li>
+          <li><strong>Validation via post-task survey:</strong> Achieved a 7.6/10 rating. Qualitative feedback led to the addition of a "Manual Availability Override" for high-priority executive hires.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="cs-section">
+      <div class="cs-body">
+        <header class="section-head">
+          <p class="micro-label">04 — Results</p>
+          <h2>Results &amp; iteration</h2>
+        </header>
+        <p>
+          The implementation was tracked via Wiggli's reporting dashboard for 50+ active recruiters, proving that
+          structural UX changes drive direct business ROI.
+        </p>
+      </div>
+
+      <div class="folio-container">
+        <div class="table-scroll">
+          <table class="cs-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Before</th>
+                <th>After</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((row) => (
+                <tr>
+                  <td>{row.metric}</td>
+                  <td class="num">{row.before}</td>
+                  <td class="num">{row.after}</td>
+                  <td>{row.impact}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cs-body">
+        <h3>Additional measures</h3>
+        <ul>
+          <li><strong>Rescheduling reduction:</strong> Initial testing showed that the multiple-timeslot feature significantly reduced rescheduling rates by providing candidates with more flexibility.</li>
+          <li><strong>Positive coordination feedback:</strong> Users reported that the Collaborative Groups feature greatly improved team alignment.</li>
+        </ul>
+
+        <h3>Continuous iteration</h3>
+        <p>
+          Based on user feedback during testing, I identified a new requirement for a "Schedule Availability" feature.
+          This allows recruiters to pre-mark their "free for interview" slots during busy seasons, further reducing
+          friction in the planning stage.
+        </p>
+      </div>
+
+      <div class="folio-container">
+        <figure class="cs-figure">
+          <img src="/images/work/schedule.png" alt="Wiggli Schedule Availability feature — Quick Add dropdown showing Event, Interview and Availability options, allowing recruiters to pre-mark free interview slots during busy hiring seasons" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- CONCLUSION -->
+    <section class="cs-section cs-conclusion">
+      <div class="cs-body">
+        <header class="section-head">
+          <p class="micro-label">05 — Conclusion</p>
+          <h2>What it added up to</h2>
+        </header>
+        <p>
+          Working on Wiggli allowed me to build a tight feedback loop with the end users at Gentis. By transforming a
+          chaotic journey involving five different communication platforms into a centralized "Collaborative Group"
+          experience, we didn't just redesign a calendar — we engineered a more efficient way for the organization to
+          grow.
+        </p>
+        <a href="/#work" class="back-link"><Icon name="arrow-left" /> Back to work</a>
+      </div>
+    </section>
+  </article>
+
+  <Footer />
+</Layout>
+
+<style>
+  article section { padding: 0; }
+
+  /* Reading column */
+  .cs-body {
+    width: 760px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    .cs-body { padding: 0 40px; }
+  }
+
+  .cs-section {
+    padding: 56px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .cs-section:first-of-type { border-top: none; }
+
+  /* Same section-title typography as the home page, tighter gap to the prose. */
+  .cs-body .section-head {
+    margin-bottom: 24px;
+  }
+
+  .cs-body h3 {
+    font-size: 1.2rem;
+    margin-top: 40px;
+    margin-bottom: 12px;
+  }
+
+  .cs-body p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 180%;
+  }
+
+  .cs-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+  }
+
+  .cs-body li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--text-muted);
+    line-height: 180%;
+    margin-bottom: 12px;
+  }
+
+  .cs-body li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .cs-body strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Figures */
+  .cs-figure {
+    margin: 34px 0;
+  }
+
+  .cs-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--card-bg);
+  }
+
+  .cs-figure.wide {
+    margin-top: 56px;
+  }
+
+  .cs-figure figcaption {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* Results table */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card-bg);
+  }
+
+  .cs-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+  }
+
+  .cs-table th {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cs-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.93rem;
+  }
+
+  .cs-table td:first-child {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .cs-table td.num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  .cs-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .cs-conclusion .back-link {
+    margin: 30px 0 0;
+  }
+</style>

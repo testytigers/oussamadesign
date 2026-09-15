@@ -1,0 +1,47 @@
+[
+  {
+    "slug": "opening-the-room",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "medium-models",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "mixture-of-experts",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "the-shrink-ray",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "precision-scaling",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "the-destruction-zone",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "quantized-versions",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "kv-cache",
+    "width": 720,
+    "height": 1280
+  },
+  {
+    "slug": "open-discussion",
+    "width": 720,
+    "height": 1280
+  }
+]

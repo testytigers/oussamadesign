@@ -1,0 +1,321 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Directory the slide images live in, e.g. "/events/foo/slides". */
+  base: string;
+  /** Slide titles, in order. Length defines the deck size. */
+  titles: string[];
+  /** Accessible name for the carousel. */
+  label: string;
+}
+
+const { base, titles, label } = Astro.props;
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
+---
+
+<div class="deck" data-deck tabindex="0" role="group" aria-roledescription="carousel" aria-label={label}>
+  <div class="deck-bar">
+    <p class="deck-title" data-deck-title>{titles[0]}</p>
+    <p class="deck-counter"><span data-deck-current>01</span> / {pad(titles.length - 1)}</p>
+  </div>
+
+  <div class="deck-stage">
+    <img
+      class="deck-slide"
+      data-deck-image
+      src={`${base}/slide-01.webp`}
+      alt={`Slide 1: ${titles[0]}`}
+      width="1600"
+      height="900"
+      decoding="async"
+    />
+
+    <div class="deck-nav-row">
+      <button type="button" class="deck-nav deck-prev" data-deck-prev aria-label="Previous slide">
+        <Icon name="arrow-left" />
+      </button>
+      <button type="button" class="deck-nav deck-next" data-deck-next aria-label="Next slide">
+        <Icon name="arrow-right" />
+      </button>
+    </div>
+  </div>
+
+  <div class="deck-strip" data-deck-strip role="tablist" aria-label="Choose a slide">
+    {slides.map((slide) => (
+      <button
+        type="button"
+        class="deck-thumb"
+        data-deck-thumb
+        data-index={slide.i}
+        role="tab"
+        aria-label={`Slide ${slide.i + 1}: ${slide.title}`}
+        aria-selected={slide.i === 0 ? 'true' : 'false'}>
+        <img
+          src={`${base}/slide-${slide.n}-thumb.webp`}
+          alt=""
+          width="320"
+          height="180"
+          loading={slide.i < 8 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </button>
+    ))}
+  </div>
+</div>
+
+<script is:inline define:vars={{ base, titles }}>
+  (() => {
+    const deck = document.querySelector('[data-deck]');
+    if (!deck) return;
+
+    const image = deck.querySelector('[data-deck-image]');
+    const titleEl = deck.querySelector('[data-deck-title]');
+    const currentEl = deck.querySelector('[data-deck-current]');
+    const strip = deck.querySelector('[data-deck-strip]');
+    const thumbs = [...deck.querySelectorAll('[data-deck-thumb]')];
+
+    const total = titles.length;
+    const pad = (n) => String(n + 1).padStart(2, '0');
+    const url = (i) => `${base}/slide-${pad(i)}.webp`;
+
+    let index = 0;
+
+    const preload = (i) => {
+      new Image().src = url((i + total) % total);
+    };
+
+    const show = (i, { scrollStrip = true } = {}) => {
+      index = (i + total) % total;
+      image.src = url(index);
+      image.alt = `Slide ${index + 1}: ${titles[index]}`;
+      titleEl.textContent = titles[index];
+      currentEl.textContent = pad(index);
+
+      thumbs.forEach((t, n) => t.setAttribute('aria-selected', n === index ? 'true' : 'false'));
+
+      if (scrollStrip) {
+        const active = thumbs[index];
+        const left = active.offsetLeft - strip.clientWidth / 2 + active.clientWidth / 2;
+        strip.scrollTo({ left, behavior: 'smooth' });
+      }
+
+      preload(index + 1);
+      preload(index - 1);
+    };
+
+    deck.querySelector('[data-deck-prev]').addEventListener('click', () => show(index - 1));
+    deck.querySelector('[data-deck-next]').addEventListener('click', () => show(index + 1));
+    thumbs.forEach((t, i) => t.addEventListener('click', () => show(i, { scrollStrip: false })));
+
+    /* Scoped to the deck, so it can't fight the photo lightbox for arrow keys. */
+    deck.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(index - 1);
+      else if (e.key === 'ArrowRight') show(index + 1);
+      else if (e.key === 'Home') show(0);
+      else if (e.key === 'End') show(total - 1);
+      else return;
+      e.preventDefault();
+    });
+
+    /* Swipe the stage on touch devices. */
+    const stage = deck.querySelector('.deck-stage');
+    let startX = null;
+    stage.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 45) show(index + (dx < 0 ? 1 : -1));
+      startX = null;
+    }, { passive: true });
+
+    preload(1);
+  })();
+</script>
+
+<style>
+  .deck {
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--card-bg);
+    overflow: hidden;
+    box-shadow: 0 18px 50px -28px rgba(10, 30, 18, 0.45);
+  }
+
+  .deck:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* --- chrome bar --- */
+  .deck-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .deck-title {
+    margin: 0;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    line-height: 1.3;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .deck-counter {
+    flex: none;
+    margin: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* --- stage --- */
+  /* Dark mat, like a projector screen: the slides are white, so they need
+     something to sit against in both themes. */
+  /* The slide sets the height, so the mat stays an even width on all four
+     sides instead of letterboxing against a fixed-ratio stage. */
+  .deck-stage {
+    position: relative;
+    padding: 20px;
+    background: #0B1710;
+    background-image: radial-gradient(120% 120% at 50% 0%, #16301F 0%, #0B1710 60%);
+  }
+
+  .deck-slide {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .deck-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(8, 18, 12, 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .deck-prev { left: 14px; }
+  .deck-next { right: 14px; }
+
+  .deck-nav:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  .deck-prev:hover { transform: translateY(-50%) translateX(-4px); }
+  .deck-next:hover { transform: translateY(-50%) translateX(4px); }
+
+  .deck-nav:focus-visible {
+    outline: 2px solid var(--footer-accent);
+    outline-offset: 2px;
+  }
+
+  .deck-nav :global(.icon) {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* --- filmstrip --- */
+  .deck-strip {
+    display: flex;
+    gap: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .deck-thumb {
+    flex: none;
+    width: 104px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .deck-thumb:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .deck-thumb[aria-selected='true'] {
+    opacity: 1;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .deck-thumb:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .deck-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  @media (max-width: 767px) {
+    .deck { border-radius: 18px; }
+    .deck-bar { padding: 13px 16px; gap: 12px; }
+    .deck-title { font-size: 0.88rem; }
+    /* Too little room to float the arrows over the slide — sit them on the
+       mat underneath it instead, where they cover nothing. */
+    .deck-stage { padding: 12px; }
+
+    .deck-nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .deck-nav {
+      position: static;
+      transform: none;
+      width: 40px;
+      height: 40px;
+    }
+
+    .deck-prev:hover,
+    .deck-next:hover { transform: none; }
+    .deck-strip { padding: 12px; gap: 8px; }
+    .deck-thumb { width: 82px; }
+  }
+</style>
