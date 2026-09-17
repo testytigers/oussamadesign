@@ -18,6 +18,9 @@
   --text: #14201A;
   --text-muted: #5B6B60;
   --border: #DDE8D9;
+  /* A more contrasted hairline for framing imagery — darker in the light
+     theme, lighter in the dark one, so the frame reads in both. */
+  --border-strong: #C3D5BE;
   --accent: #1E8E52;
   --accent-strong: #146B3E;
   --card-bg: #FFFFFF;
@@ -38,6 +41,7 @@
   --text: #EFF5EF;
   --text-muted: #93A199;
   --border: #212A21;
+  --border-strong: #38463A;
   --accent: #4ADE80;
   --accent-strong: #6FEBA0;
   --card-bg: #10160F;
@@ -84,9 +88,17 @@ h4 { font-size: 1.1rem; margin-bottom: 10px; }
 h5 { font-size: 1rem; margin-bottom: 10px; }
 h6 { font-size: 0.9rem; margin-bottom: 4px; }
 
-p, span, li {
+/* `span` deliberately excluded: margin-bottom is ignored on an inline span,
+   so it only ever took effect when a span became a flex item or block — which
+   in this codebase was always a bug (misaligned arrows, burger bars, language
+   options, lightbox caption). Block-level text keeps the rhythm. */
+p, li {
   line-height: 170%;
   margin: 0 0 16px;
+}
+
+span {
+  line-height: 170%;
 }
 
 a {
@@ -310,8 +322,10 @@ section {
   .site-header { padding: 18px 40px; }
 }
 
+
 .site-header .logo-mark {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 10px;
 }
@@ -366,8 +380,42 @@ section {
   gap: 14px;
 }
 
+/* Language switch — plain text, so it doesn't compete with the icon buttons
+   next to it. The current locale is not a link, so it stays in text colour;
+   the other one is a link and may go accent on hover. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.lang-option {
+  padding: 4px 7px;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.lang-option + .lang-option {
+  border-left: 1px solid var(--border);
+}
+
+.lang-option:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.lang-option.is-current {
+  color: var(--text);
+  font-weight: 500;
+  cursor: default;
+}
+
 .icon-btn {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 36px;
@@ -396,10 +444,11 @@ section {
 
 .nav-toggle {
   display: none;
+  flex: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 4.5px;
   width: 36px;
   height: 36px;
   border-radius: 999px;
@@ -414,19 +463,47 @@ section {
   border-color: var(--accent);
 }
 
+/* 1.5px matches the optical weight of the 16px SVG icons beside it, which
+   render a 2px stroke on a 24 viewBox at 16px — about 1.33px. */
 .nav-toggle span {
   display: block;
   flex: none;
+  /* `margin: 0` is required: the global `span` rule adds a 16px bottom margin,
+     which spread the three bars 22px apart inside a 36px button. */
+  margin: 0;
   width: 16px;
-  height: 2px;
+  height: 1.5px;
   background: var(--text);
   border-radius: 2px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.2s ease;
 }
 
-@media (max-width: 767px) {
+/* Becomes an X while the menu is open. 6px = one bar (1.5) + one gap (4.5). */
+.nav-toggle[aria-expanded='true'] span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded='true'] span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.3);
+}
+
+.nav-toggle[aria-expanded='true'] span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* The inline nav plus the language switch needs ~720px of header; a tablet
+   doesn't have it (and French runs ~18px wider still), so the drawer starts
+   at 900px rather than 767px. */
+@media (max-width: 900px) {
+  /* space-between would strand the language switch and theme toggle in the
+     middle of the bar; group every control against the right edge instead. */
+  .site-header { justify-content: flex-start; gap: 12px; }
+  .site-header .logo-mark { margin-right: auto; }
+
   .nav-toggle { display: flex; order: 2; }
-  .header-right { order: 1; }
+  .header-right { order: 1; gap: 12px; }
+  .header-icons { gap: 10px; }
 
   .nav-links {
     position: absolute;
@@ -450,6 +527,27 @@ section {
     visibility: visible;
     transform: translateY(0);
   }
+}
+
+@media (max-width: 767px) {
+  .header-icons { gap: 8px; }
+
+  /* Six controls don't fit a phone header: at 320px they overflow before any
+     gaps are added, which was crushing the burger. LinkedIn goes — it's the
+     only one repeated elsewhere (twice in the footer). */
+  .header-icons .icon-btn:not(.theme-toggle) { display: none; }
+
+  /* One line, never two — the wordmark sets the header's height. */
+  .site-header .logo-mark span {
+    white-space: nowrap;
+    font-size: 0.92rem;
+  }
+}
+
+/* At 400px and below the wordmark (170px) can't share the row with the
+   controls, so the photo carries the brand on its own. */
+@media (max-width: 400px) {
+  .site-header .logo-mark span { display: none; }
 }
 
 /* ============ PAGE HEADER ============ */
@@ -722,6 +820,10 @@ a.media-row:hover .media-row-media img {
   padding: 46px 48px;
 }
 
+/* h2 on the events index (its cards sit directly under the page h1) and h3 on
+   the home page (its cards sit under the "Case studies" h2). Same treatment
+   either way — the level tracks the document outline, not the look. */
+.media-row-body h2,
 .media-row-body h3 {
   font-size: clamp(1.5rem, 2.6vw, 2rem);
   margin-bottom: 14px;
@@ -786,6 +888,93 @@ a.media-row:hover .arrow {
   }
 }
 
+/* ============ HOME EVENT GRID ============ */
+/* Two cards side by side on the home page. `minmax(0, 1fr)` rather than a bare
+   `1fr`: the tracks hold images, and a bare 1fr resolves to the content's
+   min-content width, which lets a wide image push the grid past its container. */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  background: var(--card-bg);
+  overflow: hidden;
+  color: var(--text);
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+
+a.event-card:hover {
+  opacity: 1;
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+/* The source photos are 720x1280 portraits, so the card crops to landscape.
+   `object-position` sits above centre because the speaker and the projected
+   slide are both in the upper half of every frame. */
+.event-card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.event-card-media img {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  object-position: center 28%;
+  transition: transform 0.6s ease;
+}
+
+a.event-card:hover .event-card-media img {
+  transform: scale(1.05);
+}
+
+.event-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 30px 32px 32px;
+}
+
+.event-card-body h3 {
+  font-size: 1.35rem;
+  margin-bottom: 10px;
+  transition: color 0.25s ease;
+}
+
+a.event-card:hover .event-card-body h3 { color: var(--accent); }
+
+.event-card-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 165%;
+  margin: 0 0 22px;
+}
+
+/* Pins the CTA to the bottom so both cards align it even when one description
+   wraps to a different number of lines. */
+.event-card .media-cta {
+  margin-top: auto;
+}
+
+@media (max-width: 767px) {
+  .event-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .event-card-body { padding: 24px 22px 26px; }
+  .event-card-body h3 { font-size: 1.2rem; }
+}
+
 /* ============ JOURNAL LIST ============ */
 .journal-list {
   border-top: 1px solid var(--border);
@@ -820,7 +1009,7 @@ a.media-row:hover .arrow {
   margin: 0;
 }
 
-.journal-row h4 {
+.journal-row h3 {
   font-size: 1.15rem;
   margin-bottom: 5px;
   transition: color 0.25s ease;
@@ -832,7 +1021,7 @@ a.media-row:hover .arrow {
   font-size: 0.92rem;
 }
 
-.journal-row:hover h4 { color: var(--accent); }
+.journal-row:hover h3 { color: var(--accent); }
 
 .journal-row:hover .arrow {
   color: var(--accent);

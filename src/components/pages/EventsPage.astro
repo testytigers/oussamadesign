@@ -1,0 +1,90 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHeader from '../PageHeader.astro';
+import Icon from '../Icon.astro';
+import { defaultLang, localizePath, t, type Lang } from '../../i18n';
+import { events } from '../../data/events';
+import { eventsGraph } from '../../seo/schema';
+
+interface Props { lang?: Lang }
+const { lang = defaultLang } = Astro.props;
+const d = t(lang);
+const PATH = '/events';
+
+const schema = eventsGraph(
+  { lang, path: PATH, title: d.events.heading, description: d.events.description, image: `/images/og/events-${lang}.jpg` },
+  events.map((e) => ({
+    name: d.eventContent[e.slug as keyof typeof d.eventContent].title,
+    path: `/events/${e.slug}`,
+  })),
+  d.nav.work
+);
+---
+
+<Layout
+  title={d.events.title}
+  description={d.events.description}
+  image={`/images/og/events-${lang}.jpg`}
+  lang={lang}
+  path={PATH}
+  schema={schema}>
+
+  <Header lang={lang} path={PATH} />
+
+  <PageHeader eyebrow={d.events.eyebrow} title={d.events.heading}>
+    <p class="page-lede">{d.events.lede}</p>
+  </PageHeader>
+
+  <section class="events-list">
+    <div class="folio-container">
+      {events.map((event) => {
+        const copy = d.eventContent[event.slug as keyof typeof d.eventContent];
+        return (
+          <a class="media-row" href={localizePath(lang, `/events/${event.slug}`)}>
+            <div class="media-row-media">
+              <img src={event.cardImage} alt={copy.title} loading="lazy" />
+              <span class="media-badge">{event.badge}</span>
+            </div>
+
+            <div class="media-row-body">
+              <p class="micro-label">{d.common.workshop}</p>
+              <h2>{copy.title}</h2>
+              <p class="media-desc">{copy.cardDescription}</p>
+
+              <div class="media-chips">
+                <span class="chip">{d.events.location[event.location]}</span>
+                <span class="chip">{event.slideTitles.length} {d.common.slides}</span>
+                <span class="chip">{event.photos.length} {d.common.photos}</span>
+              </div>
+
+              <span class="media-cta">
+                {d.common.viewGallery}
+                <span class="arrow"><Icon name="arrow-right" /></span>
+              </span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <Footer lang={lang} />
+</Layout>
+
+<style>
+  .events-list {
+    padding: 64px 0 90px;
+  }
+
+  @media (max-width: 767px) {
+    .events-list { padding: 44px 0 56px; }
+  }
+
+  .events-list .folio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+</style>

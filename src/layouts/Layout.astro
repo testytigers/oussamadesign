@@ -1,36 +1,94 @@
 ---
 import '../styles/global.css';
+import { alternates, defaultLang, languages, type Lang } from '../i18n';
+import { abs, canonicalUrl, personNode, websiteNode } from '../seo/schema';
 
-export interface Props { title: string; description: string; image?: string; }
-const { title, description, image } = Astro.props;
-const siteUrl = 'https://oussamadesign.github.io';
-const ogImage = image ?? `${siteUrl}/images/me.png`;
+export interface Props {
+  title: string;
+  description: string;
+  /** Open Graph card, 1200x630. Built by scripts/build-og-images.py. */
+  image?: string;
+  lang?: Lang;
+  /** Unprefixed path of this page, e.g. "/events" — drives canonical + hreflang. */
+  path?: string;
+  /** og:type. "profile" for the home page, "article" for the case study. */
+  ogType?: 'website' | 'profile' | 'article';
+  /** Pre-built JSON-LD @graph from src/seo/schema.ts. */
+  schema?: string;
+}
+const {
+  title,
+  description,
+  image = '/images/og/home-en.jpg',
+  lang = defaultLang,
+  path = '/',
+  ogType = 'website',
+  schema,
+} = Astro.props;
 
-const jsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Oussama Bougnouch",
-  jobTitle: "Sr UX Designer, AI System Builder",
-  url: siteUrl,
-  address: { "@type": "PostalAddress", addressLocality: "Rabat", addressCountry: "Morocco" },
-  description: "Leading Principal Product Architect specializing in ROI-driven UX and enterprise-scale digital transformation.",
-  brand: { "@type": "Brand", name: "Oussama Bougnouch" },
-  knowsAbout: ["Product Architecture", "Enterprise Design Systems", "UX Strategy", "SaaS Scaling", "B2B Marketplaces"],
-  sameAs: ["https://www.linkedin.com/in/oussamabougnouch/", "https://medium.com/@oussama_bougnouch"]
-});
+const ogImage = abs(image);
+
+/* Each page used to claim the site root as its canonical URL, which told search
+   engines every page was the homepage. Build it from the real path instead. */
+const canonical = canonicalUrl(lang, path);
+const hreflangs = alternates(path).map((a) => ({
+  hreflang: languages[a.lang].htmlLang,
+  href: canonicalUrl(a.lang, path),
+}));
+
+const ogLocale = lang === 'fr' ? 'fr_FR' : 'en_US';
+const altLocale = lang === 'fr' ? 'en_US' : 'fr_FR';
+
+/* Fall back to the site-level entity so no page ever ships without structured
+   data, even if a new route forgets to build its own graph. */
+const jsonLd =
+  schema ??
+  JSON.stringify({ '@context': 'https://schema.org', '@graph': [personNode(lang), websiteNode(lang)] });
 ---
 
-<html lang="en">
+<html lang={languages[lang].htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Oussama Bougnouch" />
+
+    <!-- max-snippet/max-image-preview are what let Google use a full excerpt and
+         a large thumbnail in AI Overviews and rich results instead of a stub. -->
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+
+    <link rel="canonical" href={canonical} />
+    {hreflangs.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl(defaultLang, path)} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Oussama Bougnouch" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:url" content={Astro.site} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={altLocale} />
+
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href={Astro.site} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={title} />
+
+    <meta name="theme-color" content="#F6FAF3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0F0B" media="(prefers-color-scheme: dark)" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -56,8 +114,6 @@ const jsonLd = JSON.stringify({
     <script is:inline>
       (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","qr6xtihe13");
     </script>
-
-    <title>{title}</title>
   </head>
   <body>
     <slot />

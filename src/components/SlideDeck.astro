@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import { defaultLang, t, type Lang } from '../i18n';
 
 interface Props {
   /** Directory the slide images live in, e.g. "/events/foo/slides". */
@@ -8,9 +9,12 @@ interface Props {
   titles: string[];
   /** Accessible name for the carousel. */
   label: string;
+  lang?: Lang;
 }
 
-const { base, titles, label } = Astro.props;
+const { base, titles, label, lang = defaultLang } = Astro.props;
+const a11y = t(lang).a11y;
+const slideWord = t(lang).common.slideAlt;
 const pad = (i: number) => String(i + 1).padStart(2, '0');
 const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
 ---
@@ -26,23 +30,23 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
       class="deck-slide"
       data-deck-image
       src={`${base}/slide-01.webp`}
-      alt={`Slide 1: ${titles[0]}`}
+      alt={`${slideWord} 1: ${titles[0]}`}
       width="1600"
       height="900"
       decoding="async"
     />
 
     <div class="deck-nav-row">
-      <button type="button" class="deck-nav deck-prev" data-deck-prev aria-label="Previous slide">
+      <button type="button" class="deck-nav deck-prev" data-deck-prev aria-label={a11y.prevSlide}>
         <Icon name="arrow-left" />
       </button>
-      <button type="button" class="deck-nav deck-next" data-deck-next aria-label="Next slide">
+      <button type="button" class="deck-nav deck-next" data-deck-next aria-label={a11y.nextSlide}>
         <Icon name="arrow-right" />
       </button>
     </div>
   </div>
 
-  <div class="deck-strip" data-deck-strip role="tablist" aria-label="Choose a slide">
+  <div class="deck-strip" data-deck-strip role="tablist" aria-label={a11y.chooseSlide}>
     {slides.map((slide) => (
       <button
         type="button"
@@ -50,7 +54,7 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
         data-deck-thumb
         data-index={slide.i}
         role="tab"
-        aria-label={`Slide ${slide.i + 1}: ${slide.title}`}
+        aria-label={`${slideWord} ${slide.i + 1}: ${slide.title}`}
         aria-selected={slide.i === 0 ? 'true' : 'false'}>
         <img
           src={`${base}/slide-${slide.n}-thumb.webp`}
@@ -65,7 +69,7 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
   </div>
 </div>
 
-<script is:inline define:vars={{ base, titles }}>
+<script is:inline define:vars={{ base, titles, slideWord }}>
   (() => {
     const deck = document.querySelector('[data-deck]');
     if (!deck) return;
@@ -89,7 +93,7 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
     const show = (i, { scrollStrip = true } = {}) => {
       index = (i + total) % total;
       image.src = url(index);
-      image.alt = `Slide ${index + 1}: ${titles[index]}`;
+      image.alt = `${slideWord} ${index + 1}: ${titles[index]}`;
       titleEl.textContent = titles[index];
       currentEl.textContent = pad(index);
 

@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHeader from '../PageHeader.astro';
+import SlideDeck from '../SlideDeck.astro';
+import PhotoGallery from '../PhotoGallery.astro';
+import { defaultLang, localizePath, t, type Lang } from '../../i18n';
+import { eventBySlug } from '../../data/events';
+import { eventGraph } from '../../seo/schema';
+
+interface Props { slug: string; lang?: Lang }
+const { slug, lang = defaultLang } = Astro.props;
+const d = t(lang);
+const event = eventBySlug(slug);
+const copy = d.eventContent[slug as keyof typeof d.eventContent];
+
+const PATH = `/events/${slug}`;
+const BASE = `/events/${slug}`;
+
+/* Captions and alt text come from the dictionary; sizes from the media data. */
+const photos = event.photos.map((photo) => ({
+  ...photo,
+  ...copy.photos[photo.slug as keyof typeof copy.photos],
+}));
+
+const schema = eventGraph(
+  { lang, path: PATH, title: copy.title, description: copy.metaDescription, image: `/images/og/${slug}-${lang}.jpg` },
+  {
+    startDate: event.date,
+    locationName: d.events.location[event.location],
+    slideCount: event.slideTitles.length,
+    topics: event.topics,
+    homeName: d.nav.work,
+    eventsName: d.events.heading,
+    eventsPath: '/events',
+  }
+);
+---
+
+<Layout
+  title={copy.metaTitle}
+  description={copy.metaDescription}
+  image={`/images/og/${slug}-${lang}.jpg`}
+  lang={lang}
+  path={PATH}
+  schema={schema}>
+
+  <Header lang={lang} path={PATH} />
+
+  <PageHeader
+    eyebrow={copy.eyebrow}
+    title={copy.title}
+    back={{ href: localizePath(lang, '/events'), label: d.common.backToEvents }}>
+    <p class="page-lede">{copy.lede}</p>
+  </PageHeader>
+
+  <section class="event-slides">
+    <div class="folio-container">
+      <header class="section-head">
+        <h2>{d.common.deckHead}</h2>
+        <p class="section-lede">{d.common.deckLede(event.slideTitles.length)}</p>
+      </header>
+
+      <SlideDeck base={`${BASE}/slides`} titles={event.slideTitles} label={copy.deckLabel} lang={lang} />
+    </div>
+  </section>
+
+  <section class="event-gallery">
+    <div class="folio-container">
+      <header class="section-head">
+        <h2>{d.common.photosHead}</h2>
+        <p class="section-lede">{d.common.photosLede}</p>
+      </header>
+
+      <PhotoGallery base={BASE} photos={photos} lang={lang} />
+    </div>
+  </section>
+
+  <Footer lang={lang} />
+
+</Layout>
+
+<style>
+  .event-slides { padding: 64px 0 0; }
+  .event-gallery { padding: 72px 0 90px; }
+
+  @media (max-width: 767px) {
+    .event-slides { padding: 44px 0 0; }
+    .event-gallery { padding: 52px 0 56px; }
+  }
+</style>

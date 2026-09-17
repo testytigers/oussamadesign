@@ -1,0 +1,148 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHeader from '../PageHeader.astro';
+import Icon from '../Icon.astro';
+import { defaultLang, localizePath, t, type Lang } from '../../i18n';
+import { homeGraph } from '../../seo/schema';
+import { events } from '../../data/events';
+
+interface Props { lang?: Lang }
+const { lang = defaultLang } = Astro.props;
+const d = t(lang);
+const PATH = '/';
+
+/* Brands the work has shipped for. The marquee renders this list twice so it
+   can loop seamlessly; the second pass is hidden from assistive tech.
+   `h` is the rendered height in px, set per logo: these range from a 0.46
+   aspect vertical crest (France Judo) to a 12.5 aspect wordmark (ItaliaRail),
+   so one shared height would make the tall ones tiny. `dim` overrides the
+   grayscale brightness for pale sources that would otherwise wash out. */
+const brands = [
+  { src: '/images/logos/chanel.svg', name: 'CHANEL', h: 39 },
+  { src: '/images/logos/att.svg', name: 'AT&T', h: 33, dim: 0.5 },
+  { src: '/images/logos/carrefour.svg', name: 'Carrefour', h: 44 },
+  { src: '/images/logos/fnac.svg', name: 'Fnac', h: 48, dim: 0.42 },
+  { src: '/images/logos/wiggli.svg', name: 'Wiggli', h: 24 },
+  { src: '/images/logos/gentis.svg', name: 'Gentis', h: 23, dim: 0.32 },
+  { src: '/images/logos/italiarail.svg', name: 'ItaliaRail', h: 16 },
+  { src: '/images/logos/european-judo-union.svg', name: 'European Judo Union', h: 20, dim: 0.33 },
+  { src: '/images/logos/france-judo.png', name: 'France Judo', h: 56 },
+  { src: '/images/logos/fff.png', name: 'Fédération Française de Football', h: 54, dim: 0.28 },
+  { src: '/images/logos/ffa-athle.svg', name: "Fédération Française d'Athlétisme", h: 29 },
+  { src: '/images/logos/ippon.svg', name: 'Ippon', h: 21 },
+];
+---
+
+<Layout
+  title={d.home.title}
+  description={d.home.description}
+  image={`/images/og/home-${lang}.jpg`}
+  lang={lang}
+  path={PATH}
+  ogType="profile"
+  schema={homeGraph({ lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` })}>
+
+  <Header lang={lang} path={PATH} />
+
+  <PageHeader title={d.home.heroTitle}>
+    <p class="page-lede" set:html={d.home.heroLede} />
+    <div class="logo-marquee">
+      <div class="logo-track">
+        <ul class="logo-group">
+          {brands.map((brand) => (
+            <li style={`--logo-h:${brand.h}px;--logo-dim:${brand.dim ?? 0.55}`}><img src={brand.src} alt={brand.name} loading="lazy" decoding="async" /></li>
+          ))}
+        </ul>
+        <ul class="logo-group" aria-hidden="true">
+          {brands.map((brand) => (
+            <li style={`--logo-h:${brand.h}px;--logo-dim:${brand.dim ?? 0.55}`}><img src={brand.src} alt="" loading="lazy" decoding="async" /></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <img
+      slot="media"
+      src="/images/intro-illustration.webp"
+      alt="Ink illustration of a man in a black suit sitting on a stool, holding a single green apple in both hands"
+      width="900"
+      height="1106"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </PageHeader>
+
+  <!-- WORK -->
+  <section id="work" class="work-section">
+    <div class="folio-container">
+      <header class="section-head">
+        <h2>{d.home.workHead}</h2>
+        <p class="section-lede">{d.home.workLede}</p>
+      </header>
+
+      <div class="media-list">
+        <a class="media-row" href={localizePath(lang, '/wiggli-calendar-ux-case-study/')}>
+          <div class="media-row-media">
+            <img src="/images/wiggli.png" alt={d.home.wiggli.imageAlt} />
+            <span class="media-badge">{d.common.caseStudyBadge}</span>
+          </div>
+          <div class="media-row-body">
+            <h3>{d.home.wiggli.title}</h3>
+            <p class="media-desc">{d.home.wiggli.description}</p>
+            <div class="media-chips">
+              {d.home.wiggli.chips.map((chip) => <span class="chip">{chip}</span>)}
+            </div>
+            <span class="media-cta">
+              {d.common.readCaseStudy}
+              <span class="arrow"><Icon name="arrow-right" /></span>
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <!-- The UX journal section used to sit here. Every entry linked out to
+       LinkedIn, so the page gave away the content and kept only a title and one
+       line of excerpt. Hidden, not deleted: src/data/journal.ts and the
+       `home.journal*` dictionary entries are untouched, so bringing it back is
+       a matter of restoring this markup. -->
+  <section id="events" class="home-events">
+    <div class="folio-container">
+      <header class="section-head">
+        <h2>{d.events.heading}</h2>
+        <p class="section-lede">{d.events.lede}</p>
+      </header>
+
+      <div class="event-grid">
+        {events.map((event) => {
+          const copy = d.eventContent[event.slug as keyof typeof d.eventContent];
+          return (
+            <a class="event-card" href={localizePath(lang, `/events/${event.slug}`)}>
+              <div class="event-card-media">
+                <img src={event.cardImage} alt={copy.title} loading="lazy" width="720" height="1280" />
+                <span class="media-badge">{event.badge}</span>
+              </div>
+
+              <div class="event-card-body">
+                <h3>{copy.title}</h3>
+                <p class="event-card-desc">{copy.shortDescription}</p>
+
+                <span class="media-cta">
+                  {d.common.viewGallery}
+                  <span class="arrow"><Icon name="arrow-right" /></span>
+                </span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <Footer lang={lang} />
+
+</Layout>

@@ -1,0 +1,62 @@
+# https://oussamadesign.github.io/robots.txt
+
+# ---------------------------------------------------------------
+# Classic search crawlers
+# ---------------------------------------------------------------
+User-agent: *
+Allow: /
+
+# ---------------------------------------------------------------
+# Answer engines — these fetch a page to cite it in a generated
+# answer. Allowing them is what makes this site quotable in
+# ChatGPT Search, Perplexity, Claude and Google AI Overviews.
+# ---------------------------------------------------------------
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# ---------------------------------------------------------------
+# Training crawlers — these harvest content to train models rather
+# than to cite it. Kept open so the work is represented in future
+# models; flip these five to `Disallow: /` to opt out of training
+# without losing any of the citation traffic above.
+# ---------------------------------------------------------------
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://oussamadesign.github.io/sitemap-index.xml

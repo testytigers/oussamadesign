@@ -1,0 +1,19 @@
+---
+import { languages, locales, localizePath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Unprefixed path of the current page, e.g. "/events". */
+  path: string;
+}
+
+const { lang, path } = Astro.props;
+---
+
+<div class="lang-switch" role="group" aria-label={languages[lang] && 'Language'}>
+  {locales.map((code) => (
+    code === lang
+      ? <span class="lang-option is-current" aria-current="true">{languages[code].short}</span>
+      : <a class="lang-option" href={localizePath(code, path)} hreflang={languages[code].htmlLang} lang={languages[code].htmlLang}>{languages[code].short}</a>
+  ))}
+</div>
