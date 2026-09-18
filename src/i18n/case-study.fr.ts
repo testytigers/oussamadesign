@@ -13,7 +13,7 @@ export const caseStudyFr = {
     journeyMap:
       "Service blueprint du parcours de recrutement en 6 étapes — Initier, Vérifier les disponibilités, Aligner les agendas, Proposer l'entretien, Attendre la réponse, Confirmer — avec actions, ressentis, points de friction et opportunités",
     problem:
-      "Schéma du chaos de planification à plusieurs : candidat, deux intervieweurs et hiring manager échangeant des créneaux contradictoires par e-mail et messagerie, d'où 3 jours de délai",
+      "Schéma de la planification d'entretien à plusieurs : un créneau 12:00-13:00 refusé par le candidat, deux intervieweurs aux disponibilités distinctes, et le hiring manager qui doit chercher le seul créneau commun, 13:00-14:00, avant de le confirmer au candidat avec du retard",
     oldExperience:
       "Capture vidéo de l'ancienne interface de planification Wiggli, montrant qu'on ne pouvait proposer qu'un seul créneau — la cause première des 40 % d'abandon",
     oldExperienceCaption:

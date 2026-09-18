@@ -13,7 +13,7 @@ export const caseStudyEn = {
     journeyMap:
       'Service blueprint mapping the 6-stage hiring journey — Initiate, Check Availability, Align Schedules, Propose Interview, Await Response, Confirm Interview — with actions, feelings, pain points and opportunities per stage',
     problem:
-      'Diagram illustrating multi-party scheduling chaos: candidate, two interviewers and hiring manager exchanging conflicting time slots across email and messaging apps, causing 3-day booking delays',
+      'Diagram of multi-party interview scheduling: a proposed 12:00-13:00 slot is rejected by the candidate, two interviewers each list separate availability, and the hiring manager has to hunt for the single overlapping slot, 13:00-14:00, before confirming it back to the candidate after a delay',
     oldExperience:
       'Screen recording of the legacy Wiggli interview scheduling UI, showing the limitation of proposing only a single time slot — the root cause of 40% candidate dropout',
     oldExperienceCaption:

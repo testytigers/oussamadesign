@@ -25,34 +25,6 @@ const home = localizePath(lang, '/');
       </div>
     </div>
 
-    <div class="footer-grid">
-      <div class="footer-col footer-brand">
-        <div class="footer-wordmark">
-          <img src="/images/logo-photo.jpg" alt="" />
-          Oussama Bougnouch
-        </div>
-        <p>{d.footer.brandLine}</p>
-      </div>
-
-      <div class="footer-col">
-        <p class="micro-label">{d.footer.navigate}</p>
-        <a href={`${home}#work`}>{d.nav.work}</a>
-        <a href={localizePath(lang, '/events')}>{d.nav.events}</a>
-      </div>
-
-      <div class="footer-col">
-        <p class="micro-label">{d.footer.elsewhere}</p>
-        <a href="https://www.linkedin.com/in/oussamabougnouch/" target="_blank">LinkedIn <Icon name="external" /></a>
-        <a href="mailto:musamathemes@gmail.com">{d.footer.emailLabel} <Icon name="external" /></a>
-        <a href="/resume.pdf" target="_blank">{d.footer.resumeLabel} <Icon name="external" /></a>
-      </div>
-
-      <div class="footer-col">
-        <p class="micro-label">{d.footer.basedIn}</p>
-        <p>{d.footer.location}</p>
-      </div>
-    </div>
-
     <div class="footer-bottom">
       <p>© {new Date().getFullYear()} Oussama Bougnouch. {d.footer.rights}</p>
 

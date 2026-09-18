@@ -24,13 +24,20 @@
   --accent: #1E8E52;
   --accent-strong: #146B3E;
   --card-bg: #FFFFFF;
-  --footer-bg: #07130D;
-  --footer-gradient: radial-gradient(80% 90% at 50% 0%, #1A5E3A 0%, #0C2318 45%, #07130D 80%);
+  /* The logo's own green, darkened. Sampled from the photo background as
+     #27943B — hue 131, sat 74% — which is a grassier green than the site
+     accent at hue 148. These keep that exact hue and saturation and only drop
+     the value, so the footer reads as the brand mark rather than as a second,
+     slightly-off green. Flat #27943B was the first instinct but gives white
+     text only 3.90:1; at these values it clears 6.6:1 everywhere. */
+  --footer-bg: #13471C;
+  --footer-gradient: radial-gradient(130% 115% at 50% 0%, #1B6629 0%, #175723 50%, #13471C 100%);
   --footer-text: #F1FBF2;
-  --footer-accent: #4ADE80;
-  --footer-border: #1B3325;
-  --footer-border-strong: #2A4C37;
-  --footer-muted: #9CB3A5;
+  /* Lifted from #4ADE80, which only reached AA-large against these greens. */
+  --footer-accent: #7CEFA6;
+  --footer-border: rgba(255, 255, 255, 0.16);
+  --footer-border-strong: rgba(255, 255, 255, 0.32);
+  --footer-muted: #BCD9C3;
   --header-bg: rgba(246, 250, 243, 0.85);
 }
 
@@ -45,13 +52,18 @@
   --accent: #4ADE80;
   --accent-strong: #6FEBA0;
   --card-bg: #10160F;
-  --footer-bg: #050A07;
-  --footer-gradient: radial-gradient(80% 90% at 50% 0%, #11482C 0%, #091B12 45%, #050A07 80%);
+  /* Same logo hue, one step deeper than the light theme. Note this is still
+     lighter than the dark page ground (#0A0F0B): in dark mode the footer lifts
+     off the page as a green slab rather than receding. That is deliberate —
+     taking it below the page ground would mean dropping the value so far the
+     green stops reading at all, which defeats matching the logo. */
+  --footer-bg: #0F3816;
+  --footer-gradient: radial-gradient(130% 115% at 50% 0%, #175723 0%, #13471C 50%, #0F3816 100%);
   --footer-text: #EAF9EC;
-  --footer-accent: #4ADE80;
-  --footer-border: #16281D;
-  --footer-border-strong: #23412F;
-  --footer-muted: #8FA79A;
+  --footer-accent: #7CEFA6;
+  --footer-border: rgba(255, 255, 255, 0.14);
+  --footer-border-strong: rgba(255, 255, 255, 0.28);
+  --footer-muted: #AECFB6;
   --header-bg: rgba(10, 15, 11, 0.85);
 }
 
@@ -1054,7 +1066,9 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   justify-content: space-between;
   gap: 28px;
   padding-bottom: 46px;
-  margin-bottom: 56px;
+  /* No margin below the rule: the 56px here used to clear the four-column
+     block that sat between this and the bottom bar. With that gone, the bar's
+     own 26px padding-top mirrors the footer's 26px bottom padding. */
   border-bottom: 1px solid var(--footer-border);
 }
 
@@ -1107,63 +1121,6 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   border-color: var(--footer-text);
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.4fr repeat(3, 1fr);
-  gap: 40px;
-  padding-bottom: 60px;
-  border-bottom: 1px solid var(--footer-border);
-}
-
-@media (max-width: 860px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 34px;
-  }
-}
-
-.footer-col .micro-label {
-  color: var(--footer-muted);
-}
-
-.footer-col a,
-.footer-col p {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--footer-text);
-  font-size: 0.93rem;
-  margin: 0 0 12px;
-}
-
-.footer-col a:hover {
-  opacity: 1;
-  color: var(--footer-accent);
-}
-
-.footer-brand .footer-wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--footer-text);
-  margin-bottom: 14px;
-}
-
-.footer-brand .footer-wordmark img {
-  width: 30px;
-  height: 30px;
-  object-fit: cover;
-  transform: rotate(10deg);
-}
-
-.footer-brand p {
-  color: var(--footer-muted);
-  font-size: 0.93rem;
-  max-width: 260px;
-}
 
 .footer-bottom {
   display: flex;
