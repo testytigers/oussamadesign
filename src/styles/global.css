@@ -28,10 +28,10 @@
      #27943B — hue 131, sat 74% — which is a grassier green than the site
      accent at hue 148. These keep that exact hue and saturation and only drop
      the value, so the footer reads as the brand mark rather than as a second,
-     slightly-off green. Flat #27943B was the first instinct but gives white
-     text only 3.90:1; at these values it clears 6.6:1 everywhere. */
-  --footer-bg: #13471C;
-  --footer-gradient: radial-gradient(130% 115% at 50% 0%, #1B6629 0%, #175723 50%, #13471C 100%);
+     slightly-off green. Flat #27943B at its own 58% value gives white text only
+     3.90:1; dropped to 34% it clears 8.1:1 while staying recognisably the
+     logo's green. Solid, no gradient. */
+  --footer-bg: #175723;
   --footer-text: #F1FBF2;
   /* Lifted from #4ADE80, which only reached AA-large against these greens. */
   --footer-accent: #7CEFA6;
@@ -52,13 +52,11 @@
   --accent: #4ADE80;
   --accent-strong: #6FEBA0;
   --card-bg: #10160F;
-  /* Same logo hue, one step deeper than the light theme. Note this is still
-     lighter than the dark page ground (#0A0F0B): in dark mode the footer lifts
-     off the page as a green slab rather than receding. That is deliberate —
-     taking it below the page ground would mean dropping the value so far the
-     green stops reading at all, which defeats matching the logo. */
-  --footer-bg: #0F3816;
-  --footer-gradient: radial-gradient(130% 115% at 50% 0%, #175723 0%, #13471C 50%, #0F3816 100%);
+  /* Same logo hue, one step deeper than the light theme. Still lighter than the
+     dark page ground (#0A0F0B): in dark mode the footer lifts off the page as a
+     green slab rather than receding. Deliberate — taking it below the page
+     ground would mean dropping the value so far the green stops reading. */
+  --footer-bg: #13471C;
   --footer-text: #EAF9EC;
   --footer-accent: #7CEFA6;
   --footer-border: rgba(255, 255, 255, 0.14);
@@ -1053,7 +1051,6 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   position: relative;
   overflow: hidden;
   background: var(--footer-bg);
-  background-image: var(--footer-gradient);
   color: var(--footer-text);
   padding: 46px 20px 26px;
   margin-top: 40px;
