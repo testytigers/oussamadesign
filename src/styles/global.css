@@ -1,22 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-poppins: 'Poppins', sans-serif;
-  --font-bricolage: 'Bricolage Grotesque', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Tailwind's font utilities point at the same two tokens, so `font-sans`
+     and `font-serif` cannot drift away from the rest of the site. */
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-title);
+  --font-mono: var(--font-body);
 }
 
 /* ============ THEME TOKENS ============ */
 /* Light is the default. Dark is an opt-in feature toggled via [data-theme="dark"]. */
 :root {
+  /* Two families, site-wide. Roboto Slab sets every title, Open Sans
+     everything else — including the micro-labels and numerals that used to
+     call for JetBrains Mono. Declared once here so swapping either family is
+     a one-line change rather than a sweep through twenty rules. */
+  --font-title: 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --font-body: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
   --bg: #F6FAF3;
   --bg-elevated: #FFFFFF;
   --hero-bg: #E9F4E4;
-  --text: #14201A;
-  --text-muted: #5B6B60;
+  /* Black, and neutral greys throughout. The greens these replaced tinted
+     every paragraph on the site; muted body copy also moves 5.35:1 -> 7.64:1. */
+  --text: #000000;
+  --text-muted: #505050;
+  /* One step back from muted, for glyphs that should recede without
+     becoming unreadable — formula operators and the like. */
+  --text-faint: #767676;
   --border: #DDE8D9;
   /* A more contrasted hairline for framing imagery — darker in the light
      theme, lighter in the dark one, so the frame reads in both. */
@@ -24,20 +35,18 @@
   --accent: #1E8E52;
   --accent-strong: #146B3E;
   --card-bg: #FFFFFF;
-  /* The logo's own green, darkened. Sampled from the photo background as
-     #27943B — hue 131, sat 74% — which is a grassier green than the site
-     accent at hue 148. These keep that exact hue and saturation and only drop
-     the value, so the footer reads as the brand mark rather than as a second,
-     slightly-off green. Flat #27943B at its own 58% value gives white text only
-     3.90:1; dropped to 34% it clears 8.1:1 while staying recognisably the
-     logo's green. Solid, no gradient. */
-  --footer-bg: #175723;
-  --footer-text: #F1FBF2;
+  /* Black, matching --text. The footer used to carry the logo's green, which
+     made it a second brand statement competing with the work above it. Black
+     ends the page instead of decorating it, and it is the one colour on the
+     site that cannot clash with a case-study thumbnail. White on it is 21:1.
+     Solid, no gradient. */
+  --footer-bg: #000000;
+  --footer-text: #FFFFFF;
   /* Lifted from #4ADE80, which only reached AA-large against these greens. */
   --footer-accent: #7CEFA6;
   --footer-border: rgba(255, 255, 255, 0.16);
   --footer-border-strong: rgba(255, 255, 255, 0.32);
-  --footer-muted: #BCD9C3;
+  --footer-muted: #D6D6D6;
   --header-bg: rgba(246, 250, 243, 0.85);
 }
 
@@ -45,23 +54,25 @@
   --bg: #0A0F0B;
   --bg-elevated: #10160F;
   --hero-bg: #0E1712;
-  --text: #EFF5EF;
-  --text-muted: #93A199;
+  --text: #FFFFFF;
+  --text-muted: #ADADAD;
+  --text-faint: #8A8A8A;
   --border: #212A21;
   --border-strong: #38463A;
   --accent: #4ADE80;
   --accent-strong: #6FEBA0;
   --card-bg: #10160F;
-  /* Same logo hue, one step deeper than the light theme. Still lighter than the
-     dark page ground (#0A0F0B): in dark mode the footer lifts off the page as a
-     green slab rather than receding. Deliberate — taking it below the page
-     ground would mean dropping the value so far the green stops reading. */
-  --footer-bg: #13471C;
-  --footer-text: #EAF9EC;
+  /* Black in both themes, so the footer is one fixed thing rather than a colour
+     that tracks the theme. Here it sits *below* the page ground (#0A0F0B)
+     rather than above it, so the band reads as depth instead of as a slab —
+     the inverse of the green it replaced, and only about 1.09:1 against the
+     page, which is why the top hairline does the separating. */
+  --footer-bg: #000000;
+  --footer-text: #FFFFFF;
   --footer-accent: #7CEFA6;
   --footer-border: rgba(255, 255, 255, 0.14);
   --footer-border-strong: rgba(255, 255, 255, 0.28);
-  --footer-muted: #AECFB6;
+  --footer-muted: #D6D6D6;
   --header-bg: rgba(10, 15, 11, 0.85);
 }
 
@@ -75,8 +86,10 @@ body {
   background: var(--bg);
   color: var(--text);
   font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 300;
+  font-family: var(--font-body);
+  /* 400 is the floor: Light at 16px on a light ground reads washed out,
+     and Open Sans 300 is noticeably frail at body size. */
+  font-weight: 400;
   width: 100%;
   letter-spacing: .3px;
   overflow-x: hidden;
@@ -87,7 +100,7 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 130%;
   font-weight: 700;
   letter-spacing: .3px;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: var(--font-title);
   color: var(--text);
 }
 
@@ -172,7 +185,7 @@ a:hover {
 
 /* Micro label — mono, uppercase, wide tracking */
 .micro-label {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -350,7 +363,7 @@ section {
 }
 
 .site-header .logo-mark span {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: var(--font-title);
   font-weight: 700;
   font-size: 1rem;
   color: var(--text);
@@ -396,7 +409,7 @@ section {
 .lang-switch {
   display: inline-flex;
   align-items: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-body);
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -635,7 +648,15 @@ section {
   font-size: clamp(2rem, 4.4vw, 3rem);
   line-height: 110%;
   letter-spacing: -0.015em;
-  max-width: 20ch;
+  /* Long titles otherwise wrap to three lines with the right-hand half of the
+     column empty. 32ch is where every current title drops to two lines and
+     fills ~87%; past that the gain is nil and the measure just runs at the
+     container edge. Pages with a media slot are unaffected — their text
+     column is narrower than this cap anyway.
+     Note `ch` is font-relative: this was 28ch under the previous grotesque and
+     had to be re-measured for Roboto Slab, whose zero is narrower. Re-check it
+     if the title face ever changes again. */
+  max-width: 32ch;
   margin: 0;
 }
 
@@ -816,7 +837,7 @@ a.media-row:hover .media-row-media img {
   border-radius: 999px;
   background: #0B1710;
   color: #F1FBF2;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -896,6 +917,174 @@ a.media-row:hover .arrow {
   .media-row-body {
     padding: 28px 24px 30px;
   }
+}
+
+/* ============ CASE STUDY (shared by every study) ============ */
+/* Lifted out of CaseStudyPage.astro's scoped block so a second study can
+   use the same reading column, figure frame and table treatment instead of
+   carrying a duplicate copy. Astro scoping made the originals reachable
+   from exactly one component. */
+/* Reading column */
+.cs-body {
+  width: 760px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .cs-body { padding: 0 40px; }
+}
+
+/* This must stay a class rule, not `article section` — Astro scopes every
+   compound, so `article[cid] section[cid]` (0,2,2) would outrank
+   `.cs-section[cid]` (0,2,0) and flatten the padding to whatever it set. */
+.cs-section {
+  padding: 72px 0;
+  border-top: 1px solid var(--border);
+}
+
+/* The hero figure above already carries 34px of its own margin. */
+.cs-section:first-of-type {
+  border-top: none;
+  padding-top: 30px;
+}
+
+/* The section padding owns the rhythm around each divider; a trailing
+   paragraph, list or figure margin would stack on top of it unevenly. */
+.cs-section > :last-child > :last-child,
+.cs-section > :last-child > ul:last-child > li:last-child {
+  margin-bottom: 0;
+}
+
+/* Same section-title typography as the home page, tighter gap to the prose. */
+.cs-body .section-head {
+  margin-bottom: 24px;
+}
+
+.cs-body h3 {
+  font-size: 1.2rem;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+.cs-body p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 180%;
+}
+
+.cs-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.cs-body li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--text-muted);
+  line-height: 180%;
+  margin-bottom: 12px;
+}
+
+.cs-body li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.cs-body strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Figures */
+.cs-figure {
+  margin: 34px 0;
+}
+
+.cs-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background: var(--card-bg);
+}
+
+.cs-figure.wide {
+  margin-top: 56px;
+}
+
+.cs-figure figcaption {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Results table */
+.table-scroll {
+  width: 100%;
+  /* Matches the .cs-figure rhythm. Without this the table sat flush against
+     the paragraph after it — the wrapper divs stop the surrounding text
+     margins from reaching it. */
+  margin: 28px 0 36px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card-bg);
+}
+
+.cs-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+.cs-table th {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cs-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.93rem;
+}
+
+.cs-table td:first-child {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.cs-table td.num {
+  font-family: var(--font-body);
+  /* Open Sans is proportional, so digits no longer line up in a column by
+     default the way the old monospace did. Tabular figures restore it. */
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.cs-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ============ HOME EVENT GRID ============ */
@@ -1011,7 +1200,7 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
 }
 
 .journal-index {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-muted);
@@ -1054,6 +1243,13 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   color: var(--footer-text);
   padding: 46px 20px 26px;
   margin-top: 40px;
+}
+
+/* Only dark mode needs this. Against the light page black draws its own edge;
+   against #0A0F0B it does not, and without a hairline the footer would just be
+   where the page stopped being visible. */
+:root[data-theme="dark"] .site-footer {
+  border-top: 1px solid var(--footer-border);
 }
 
 .footer-cta {

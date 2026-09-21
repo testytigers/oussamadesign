@@ -7,6 +7,7 @@ import Icon from '../Icon.astro';
 import { defaultLang, localizePath, t, type Lang } from '../../i18n';
 import { homeGraph } from '../../seo/schema';
 import { events } from '../../data/events';
+import { caseStudies } from '../../data/case-studies';
 
 interface Props { lang?: Lang }
 const { lang = defaultLang } = Astro.props;
@@ -83,23 +84,28 @@ const brands = [
       </header>
 
       <div class="media-list">
-        <a class="media-row" href={localizePath(lang, '/wiggli-calendar-ux-case-study/')}>
-          <div class="media-row-media">
-            <img src="/images/wiggli.png" alt={d.home.wiggli.imageAlt} />
-            <span class="media-badge">{d.common.caseStudyBadge}</span>
-          </div>
-          <div class="media-row-body">
-            <h3>{d.home.wiggli.title}</h3>
-            <p class="media-desc">{d.home.wiggli.description}</p>
-            <div class="media-chips">
-              {d.home.wiggli.chips.map((chip) => <span class="chip">{chip}</span>)}
-            </div>
-            <span class="media-cta">
-              {d.common.readCaseStudy}
-              <span class="arrow"><Icon name="arrow-right" /></span>
-            </span>
-          </div>
-        </a>
+        {caseStudies.map((study) => {
+          const card = d.caseStudyCards[study.slug as keyof typeof d.caseStudyCards];
+          return (
+            <a class="media-row" href={localizePath(lang, `/${study.slug}/`)}>
+              <div class="media-row-media">
+                <img src={study.cardImage.replace('{lang}', lang)} alt={card.imageAlt} loading="lazy" />
+                <span class="media-badge">{d.common.caseStudyBadge}</span>
+              </div>
+              <div class="media-row-body">
+                <h3>{card.title}</h3>
+                <p class="media-desc">{card.description}</p>
+                <div class="media-chips">
+                  {card.chips.map((chip) => <span class="chip">{chip}</span>)}
+                </div>
+                <span class="media-cta">
+                  {d.common.readCaseStudy}
+                  <span class="arrow"><Icon name="arrow-right" /></span>
+                </span>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -144,5 +150,5 @@ const brands = [
   </section>
 
   <Footer lang={lang} />
-
 </Layout>
+

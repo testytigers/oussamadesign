@@ -164,7 +164,7 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
 
   .deck-title {
     margin: 0;
-    font-family: 'Bricolage Grotesque', sans-serif;
+    font-family: var(--font-title);
     font-weight: 600;
     font-size: 0.98rem;
     line-height: 1.3;
@@ -177,7 +177,7 @@ const slides = titles.map((title, i) => ({ n: pad(i), title, i }));
   .deck-counter {
     flex: none;
     margin: 0;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     color: var(--text-muted);

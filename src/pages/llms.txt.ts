@@ -12,11 +12,17 @@
 import type { APIRoute } from 'astro';
 import { t, locales } from '../i18n';
 import { events } from '../data/events';
+import { caseStudies } from '../data/case-studies';
 import { SITE_URL, canonicalUrl } from '../seo/schema';
 
 export const GET: APIRoute = () => {
   const en = t('en');
   const url = (path: string) => canonicalUrl('en', path);
+
+  const studyLines = caseStudies.map((study) => {
+    const card = en.caseStudyCards[study.slug as keyof typeof en.caseStudyCards];
+    return `- [${card.title}](${url(`/${study.slug}/`)}): ${card.description}`;
+  });
 
   const eventLines = events.map((event) => {
     const copy = en.eventContent[event.slug as keyof typeof en.eventContent];
@@ -46,6 +52,8 @@ export const GET: APIRoute = () => {
 - Wiggli recruiting calendar: cut scheduling time from 3 days to 15 minutes.
 - Automated interview reminders reduced no-shows by 46%.
 - Post-task usability survey scored 7.6/10; tracked across 50+ active recruiters.
+- Wiggli candidate matching: screening time down 65% for power users, 40% for regular users.
+- Wiggli candidate matching: six-pillar explainable scoring model, built on a survey of 243 hiring clients.
 - Scaled a B2B marketplace 9x.
 
 ## Organisations worked with
@@ -62,7 +70,7 @@ AI systems, local LLM deployment, model quantization and context management.
 ## Pages
 
 - [Home / profile](${url('/')}): ${en.home.description}
-- [Wiggli Recruiting Calendar case study](${url('/wiggli-calendar-ux-case-study/')}): ${en.home.wiggli.description}
+${studyLines.join('\n')}
 - [Workshops & talks](${url('/events')}): ${en.events.description}
 ${eventLines.join('\n')}
 - [Resume (PDF)](${new URL('/resume.pdf', SITE_URL).href}): full career history.

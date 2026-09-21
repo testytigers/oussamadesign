@@ -1,0 +1,431 @@
+---
+/**
+ * Renders a case study written as typed blocks.
+ *
+ * Prose sits in the 760px reading column; figures and tables break out into
+ * the wider folio container. Consecutive blocks of the same kind are grouped
+ * into one wrapper so the markup matches what a hand-built study would emit.
+ */
+import type { Block, CaseStudyFigure } from '../data/case-studies';
+import FlowTimeline from './FlowTimeline.astro';
+
+interface Props {
+  blocks: Block[];
+  figures: Record<string, CaseStudyFigure>;
+}
+const { blocks, figures } = Astro.props;
+
+/* Everything shares the reading column. Media used to break out to the wider
+   folio container, which put figures 320px wider than the prose beside them
+   and left every image hanging past both text edges. One container, one
+   measure — tables and formulas scroll inside their own box if they need to. */
+
+const alignOf = (block: Extract<Block, { t: 'table' }>, i: number) => block.align?.[i] ?? 'left';
+
+/* Split an expression into typed tokens so numbers, operators and names can be
+   styled separately. Handles the French decimal comma, and only treats a bare
+   `x` as multiplication so it never mangles a word. */
+type Token = { k: 'num' | 'op' | 'fn' | 'txt'; v: string };
+const SPLIT = /(\d+[.,]\d+|\d+|[+\/=()[\]]|×|\bx\b|\bmin\b)/g;
+
+function tokenise(expr: string): Token[] {
+  return expr
+    .split(SPLIT)
+    .filter((part) => part !== '' && part !== undefined)
+    .map((v) => {
+      if (/^\d+[.,]?\d*$/.test(v)) return { k: 'num' as const, v };
+      if (v === 'min') return { k: 'fn' as const, v };
+      if (v === 'x' || v === '×') return { k: 'op' as const, v: '×' };
+      if (/^[+\/=()[\]]$/.test(v)) return { k: 'op' as const, v };
+      return { k: 'txt' as const, v };
+    });
+}
+
+/* "Industry: direct 1.0, adjacent 0.8" -> label + value pairs. */
+function parseLegend(line: string) {
+  const at = line.indexOf(':');
+  const label = at === -1 ? '' : line.slice(0, at).trim();
+  const rest = at === -1 ? line : line.slice(at + 1);
+  return { label, items: rest.split(',').map((x) => x.trim()).filter(Boolean) };
+}
+---
+
+<div class="cs-body">
+  {blocks.map((block) => {
+      switch (block.t) {
+        case 'p':
+          return <p set:html={block.html} />;
+
+        case 'h3':
+          return <h3>{block.text}</h3>;
+
+        case 'ul':
+          return <ul>{block.items.map((item) => <li set:html={item} />)}</ul>;
+
+        case 'ol':
+          return <ol class="cs-ol">{block.items.map((item) => <li set:html={item} />)}</ol>;
+
+        case 'note':
+          return <aside class="cs-note"><p set:html={block.html} /></aside>;
+
+        case 'code':
+          return (
+            <div class="cs-code">
+              <pre><code>{block.body}</code></pre>
+            </div>
+          );
+
+        case 'formula':
+          return (
+            <div class="cs-formula">
+              {block.items.map((item) => (
+                <div class="fx">
+                  <p class="fx-out">{item.out}</p>
+                  <p class="fx-expr">
+                    {tokenise(item.expr).map((tok) => <span class={`t-${tok.k}`}>{tok.v}</span>)}
+                  </p>
+                  {item.legend && (
+                    <dl class="fx-legend">
+                      {item.legend.map((line) => {
+                        const { label, items } = parseLegend(line);
+                        return (
+                          <div>
+                            <dt>{label}</dt>
+                            <dd>{items.map((v) => <span class="fx-pair">{v}</span>)}</dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  )}
+                </div>
+              ))}
+            </div>
+          );
+
+        case 'flow':
+          return <FlowTimeline lanes={block.lanes} tone={block.tone} />;
+
+        case 'table':
+          return (
+            <div class="table-scroll">
+              <table class="cs-table">
+                <thead>
+                  <tr>{block.head.map((h, i) => <th style={`text-align:${alignOf(block, i)}`} set:html={h} />)}</tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr>{row.map((cell, i) => <td style={`text-align:${alignOf(block, i)}`} set:html={cell} />)}</tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+
+        case 'figure': {
+          const figure = figures[block.key];
+          if (!figure) return null;
+          return (
+            <figure class="cs-figure">
+              {figure.video ? (
+                /* Silent UI loop, the modern replacement for a demo GIF — a
+                   fraction of the weight and seekable. `data-loop` lets the
+                   script below hand control back under reduced motion. */
+                <video
+                  data-loop
+                  src={figure.video.src}
+                  poster={figure.video.poster}
+                  width={figure.video.width}
+                  height={figure.video.height}
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  preload="metadata"
+                  aria-label={figure.alt}
+                />
+              ) : figure.src ? (
+                <img src={figure.src} alt={figure.alt} loading="lazy" />
+              ) : (
+                /* No screen yet. Deliberately dressed as a broken image —
+                   torn icon top-left with the alt text beside it, the way a
+                   browser renders a src it cannot load. Adding `src` to the
+                   figure swaps it for the real screen. */
+                <div class="cs-figure-pending" role="img" aria-label={figure.alt}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                    <path d="M11 3.5H4.6a1.1 1.1 0 0 0-1.1 1.1v14.8a1.1 1.1 0 0 0 1.1 1.1H11" />
+                    <path d="M13 3.5h6.4a1.1 1.1 0 0 1 1.1 1.1v14.8a1.1 1.1 0 0 1-1.1 1.1H13" />
+                    <path d="m11.6 3-1.1 3.6 2.1 1.8-2.4 2.2 1.8 2.6-2.1 2.7 1.5 2.4-1 3.2" />
+                    <circle cx="7.4" cy="8.6" r="1.1" />
+                    <path d="M3.6 17.2 6.8 14l2.1 2" />
+                    <path d="M20.4 17.6 17.6 15l-2.3 2.2" />
+                  </svg>
+                  <span>{figure.alt}</span>
+                </div>
+              )}
+              <figcaption>{figure.caption}</figcaption>
+            </figure>
+          );
+        }
+      }
+  })}
+</div>
+
+<script>
+  /* An autoplaying loop is motion the viewer did not ask for. Under reduced
+     motion it pauses on the poster frame and gains controls, so the demo is
+     still reachable on demand. */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLVideoElement>('video[data-loop]').forEach((video) => {
+      video.autoplay = false;
+      video.loop = false;
+      video.controls = true;
+      video.pause();
+    });
+  }
+</script>
+
+<style>
+  /* Numbered list — the unordered one already has a shared treatment, this
+     keeps the same rhythm but shows the ordinal. */
+  .cs-ol {
+    counter-reset: cs-ol;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+  }
+
+  .cs-ol > li {
+    counter-increment: cs-ol;
+    position: relative;
+    padding-left: 30px;
+    color: var(--text-muted);
+    line-height: 180%;
+    margin-bottom: 12px;
+  }
+
+  .cs-ol > li::before {
+    content: counter(cs-ol);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 200%;
+    color: var(--accent);
+  }
+
+  /* A finding that carries its section — set apart, not shouted. */
+  .cs-note {
+    margin: 26px 0;
+    padding: 2px 0 2px 22px;
+    border-left: 2px solid var(--accent);
+  }
+
+  .cs-note p {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.02rem;
+    line-height: 175%;
+  }
+
+  /* Formulas and flow diagrams. Scrolls rather than wraps: a wrapped ASCII
+     diagram is unreadable, and these are alignment-sensitive. */
+  .cs-code {
+    margin: 26px 0;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-elevated);
+    overflow-x: auto;
+  }
+
+  .cs-code pre {
+    margin: 0;
+    padding: 20px 22px;
+  }
+
+  .cs-code code {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    line-height: 180%;
+    color: var(--text-muted);
+    white-space: pre;
+  }
+
+  /* ---------- formulas ---------- */
+  /* Typeset rather than code-fenced: these are the argument of the case study,
+     not source, so the numbers carry the emphasis and the prose sets around
+     them. Each row is output name, expression, then any lookup table. */
+  .cs-formula {
+    margin: 28px 0 36px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card-bg);
+    overflow: hidden;
+  }
+
+  .fx {
+    padding: 26px 30px;
+  }
+
+  .fx + .fx {
+    border-top: 1px solid var(--border);
+  }
+
+  .fx-out {
+    margin: 0 0 10px;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* The identifiers sit back so the constants carry the line. */
+  .fx-expr {
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 190%;
+    color: var(--text-muted);
+    overflow-wrap: break-word;
+  }
+
+  /* Numbers are the payload — mono so they align and read as quantities.
+     Emphasis comes from weight and tone, not colour: green is reserved for
+     links, and a green numeral in running text reads as one. */
+  .fx-expr .t-num {
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95em;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* A border token was standing in here: it read fine on the dark card but
+     only reached 1.55:1 on the light one, so the operators all but vanished. */
+  .fx-expr .t-op {
+    color: var(--text-faint);
+    padding: 0 0.12em;
+  }
+
+  .fx-expr .t-fn {
+    font-family: var(--font-body);
+    font-size: 0.9em;
+    color: var(--text-muted);
+  }
+
+  .fx-legend {
+    margin: 16px 0 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .fx-legend > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+  }
+
+  .fx-legend dt {
+    flex: none;
+    min-width: 96px;
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .fx-legend dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+
+  .fx-pair {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 767px) {
+    .fx { padding: 20px 18px; }
+    .fx-expr { font-size: 1rem; line-height: 185%; }
+    .fx-legend dt { min-width: 0; width: 100%; }
+  }
+
+  /* Video figures take the same frame as stills. */
+  .cs-figure video {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    background: var(--card-bg);
+  }
+
+  /* Placeholder for a screen that does not exist yet, styled as a broken
+     image: hairline frame, torn icon in the top-left corner, alt text running
+     beside it — what a browser shows for a src it cannot fetch. */
+  .cs-figure-pending {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    /* Shallow on purpose. A full 16/9 reservation for four missing screens
+       leaves the page looking hollow; the real images set their own height
+       once they land. */
+    aspect-ratio: 16 / 5;
+    min-height: 150px;
+    /* Required with the pair above: once `min-height` makes the height
+       definite, `aspect-ratio` back-computes a width from it and the box
+       blows straight past a narrow container. */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+  }
+
+  .cs-figure-pending svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    opacity: 0.55;
+  }
+
+  /* The alt text itself, as a broken image would surface it. */
+  .cs-figure-pending span {
+    font-size: 0.85rem;
+    line-height: 155%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+
+  @media (max-width: 767px) {
+    .cs-figure-pending {
+      aspect-ratio: auto;
+      min-height: 0;
+      padding: 14px;
+    }
+
+    .cs-figure-pending span { -webkit-line-clamp: 6; font-size: 0.8rem; }
+  }
+
+  @media (max-width: 767px) {
+    .cs-code pre { padding: 16px; }
+    .cs-code code { font-size: 0.75rem; }
+    .cs-note { margin: 22px 0; padding-left: 16px; }
+  }
+</style>

@@ -47,7 +47,7 @@ const schema = caseStudyGraph(
   </PageHeader>
 
   <article>
-    <div class="folio-container">
+    <div class="cs-body">
       <figure class="cs-figure wide">
         <img src={`${IMG}/cal-view.png`} alt={c.figures.calView} />
       </figure>
@@ -67,7 +67,7 @@ const schema = caseStudyGraph(
         <ul>{c.discovery.research.map((item) => <li set:html={item} />)}</ul>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/journey-map.png`} alt={c.figures.journeyMap} />
         </figure>
@@ -77,7 +77,7 @@ const schema = caseStudyGraph(
         <h3>{c.discovery.problemsHeading}</h3>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/problem.png`} alt={c.figures.problem} />
         </figure>
@@ -87,7 +87,7 @@ const schema = caseStudyGraph(
         <ul>{c.discovery.problems.map((item) => <li set:html={item} />)}</ul>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/old-experience.gif`} alt={c.figures.oldExperience} />
           <figcaption>{c.figures.oldExperienceCaption}</figcaption>
@@ -105,7 +105,7 @@ const schema = caseStudyGraph(
         <p>{c.solution.p1}</p>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/user-flow.png`} alt={c.figures.userFlow} />
         </figure>
@@ -116,7 +116,7 @@ const schema = caseStudyGraph(
         <p>{c.solution.groupsP}</p>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/collaborative-groups.png`} alt={c.figures.collaborativeGroups} />
         </figure>
@@ -128,7 +128,7 @@ const schema = caseStudyGraph(
         <ul>{c.solution.engine.map((item) => <li set:html={item} />)}</ul>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/find-best.png`} alt={c.figures.findBest} />
         </figure>
@@ -140,7 +140,7 @@ const schema = caseStudyGraph(
         <ul>{c.solution.arch.map((item) => <li set:html={item} />)}</ul>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/calendar-views.png`} alt={c.figures.calendarViews} />
         </figure>
@@ -151,7 +151,7 @@ const schema = caseStudyGraph(
         <p>{c.solution.syncP}</p>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/calendar-settings.png`} alt={c.figures.calendarSettings} />
         </figure>
@@ -184,7 +184,7 @@ const schema = caseStudyGraph(
         <p>{c.results.p1}</p>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <div class="table-scroll">
           <table class="cs-table">
             <thead>
@@ -212,7 +212,7 @@ const schema = caseStudyGraph(
         <p>{c.results.iterationP}</p>
       </div>
 
-      <div class="folio-container">
+      <div class="cs-body">
         <figure class="cs-figure">
           <img src={`${IMG}/schedule.png`} alt={c.figures.schedule} />
         </figure>
@@ -236,162 +236,6 @@ const schema = caseStudyGraph(
 </Layout>
 
 <style>
-  /* Reading column */
-  .cs-body {
-    width: 760px;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-  }
-
-  @media (min-width: 768px) {
-    .cs-body { padding: 0 40px; }
-  }
-
-  /* This must stay a class rule, not `article section` — Astro scopes every
-     compound, so `article[cid] section[cid]` (0,2,2) would outrank
-     `.cs-section[cid]` (0,2,0) and flatten the padding to whatever it set. */
-  .cs-section {
-    padding: 72px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  /* The hero figure above already carries 34px of its own margin. */
-  .cs-section:first-of-type {
-    border-top: none;
-    padding-top: 30px;
-  }
-
-  /* The section padding owns the rhythm around each divider; a trailing
-     paragraph, list or figure margin would stack on top of it unevenly. */
-  .cs-section > :last-child > :last-child,
-  .cs-section > :last-child > ul:last-child > li:last-child {
-    margin-bottom: 0;
-  }
-
-  /* Same section-title typography as the home page, tighter gap to the prose. */
-  .cs-body .section-head {
-    margin-bottom: 24px;
-  }
-
-  .cs-body h3 {
-    font-size: 1.2rem;
-    margin-top: 40px;
-    margin-bottom: 12px;
-  }
-
-  .cs-body p {
-    color: var(--text-muted);
-    font-size: 1rem;
-    line-height: 180%;
-  }
-
-  .cs-body ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 16px;
-  }
-
-  .cs-body li {
-    position: relative;
-    padding-left: 22px;
-    color: var(--text-muted);
-    line-height: 180%;
-    margin-bottom: 12px;
-  }
-
-  .cs-body li::before {
-    content: "";
-    position: absolute;
-    left: 2px;
-    top: 13px;
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-    background: var(--accent);
-  }
-
-  .cs-body strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  /* Figures */
-  .cs-figure {
-    margin: 34px 0;
-  }
-
-  .cs-figure img {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    border: 1px solid var(--border-strong);
-    border-radius: 20px;
-    background: var(--card-bg);
-  }
-
-  .cs-figure.wide {
-    margin-top: 56px;
-  }
-
-  .cs-figure figcaption {
-    margin-top: 12px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-align: center;
-  }
-
-  /* Results table */
-  .table-scroll {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    background: var(--card-bg);
-  }
-
-  .cs-table {
-    width: 100%;
-    min-width: 640px;
-    border-collapse: collapse;
-  }
-
-  .cs-table th {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: left;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cs-table td {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 0.93rem;
-  }
-
-  .cs-table td:first-child {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .cs-table td.num {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.88rem;
-    color: var(--text);
-  }
-
-  .cs-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
   .cs-conclusion .back-link {
     margin: 30px 0 0;
   }

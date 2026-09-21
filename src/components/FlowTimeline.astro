@@ -1,0 +1,211 @@
+---
+/**
+ * A process timeline: one lane renders as a single chain, two render side by
+ * side inside ONE card split by a centre rule.
+ *
+ * The rail needs an explicit `height: auto`. These items live inside
+ * `.cs-body`, whose list styling sets `li::before { height: 6px }` to draw a
+ * round bullet. Setting only `top`/`bottom` left that 6px in force, so the
+ * connector rendered as a stub and the timeline looked broken. Each segment
+ * now spans exactly node-centre to node-centre, so the line reads continuous.
+ */
+interface Props {
+  lanes: { title?: string; steps: string[] }[];
+  /** Styles the terminal node: where the old process ended vs the new one. */
+  tone?: 'problem' | 'solution';
+}
+const { lanes, tone } = Astro.props;
+---
+
+<div
+  class:list={['flow', tone && `is-${tone}`, lanes.length > 1 && 'is-split']}
+  data-flow>
+  {lanes.map((lane) => (
+    <div class="lane">
+      {lane.title && <p class="lane-title">{lane.title}</p>}
+      <ol>
+        {lane.steps.map((step, i) => (
+          <li style={`--i:${i}`} class:list={[i === lane.steps.length - 1 && 'is-last']}>
+            <span class="node" aria-hidden="true" />
+            <span class="step">{step}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  ))}
+</div>
+
+<script>
+  /* Animation is opt-in from JS: the `data-anim` attribute is what hides the
+     steps, so with JS off — or reduced motion on — the timeline renders fully
+     drawn rather than blank. */
+  const flows = document.querySelectorAll<HTMLElement>('[data-flow]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (flows.length && !reduced && 'IntersectionObserver' in window) {
+    flows.forEach((flow) => flow.setAttribute('data-anim', ''));
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    flows.forEach((flow) => io.observe(flow));
+  }
+</script>
+
+<style>
+  /* One card. Two lanes share it, split by a rule rather than a gap. */
+  .flow {
+    margin: 28px 0 36px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card-bg);
+    overflow: hidden;
+  }
+
+  .flow.is-split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lane {
+    padding: 26px 28px 28px;
+  }
+
+  .flow.is-split .lane + .lane {
+    border-left: 1px solid var(--border);
+  }
+
+  .lane-title {
+    margin: 0 0 18px;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .lane ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* These items inherit `.cs-body li`, which adds a 12px bottom margin for
+     prose lists. That margin sat between the rail's end and the next node, so
+     the spacing has to come from padding alone or the line breaks again. */
+  .lane li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 34px 28px;
+  }
+
+  .lane li.is-last { padding-bottom: 0; }
+
+  /* Node centre sits 12.5px down (7px offset + half of 11px). The rail runs
+     from this centre to the next one: `bottom: -12px` reaches into the
+     following item by the same amount its own rail starts down. */
+  .lane li::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 12px;
+    bottom: -12px;
+    width: 1px;
+    /* Both required: they override the round bullet `.cs-body li::before`
+       would otherwise impose on these items. */
+    height: auto;
+    border-radius: 0;
+    background: var(--border-strong);
+    transform-origin: top center;
+  }
+
+  .lane li.is-last::before { display: none; }
+
+  .node {
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    border: 2px solid var(--border-strong);
+    background: var(--card-bg);
+    box-sizing: border-box;
+  }
+
+  .step {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 165%;
+    color: var(--text-muted);
+  }
+
+  .lane li.is-last .step { color: var(--text); }
+
+  /* The terminal node carries the verdict. Colour sits on the marker, never on
+     the text — green on body copy is reserved for links. */
+  .is-solution .lane li.is-last .node {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .is-problem .lane li.is-last .node {
+    border-color: #C2410C;
+    background: #C2410C;
+  }
+
+  /* ---------- reveal ---------- */
+  /* Each step lands, then its rail draws down to the next one. */
+  .flow[data-anim] .node {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  .flow[data-anim] .step {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  .flow[data-anim] li::before {
+    transform: scaleY(0);
+  }
+
+  .flow[data-anim].is-in .node {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.28s ease calc(var(--i) * 130ms),
+      transform 0.36s cubic-bezier(0.22, 1.2, 0.36, 1) calc(var(--i) * 130ms);
+  }
+
+  .flow[data-anim].is-in .step {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.34s ease calc(var(--i) * 130ms + 60ms),
+      transform 0.34s ease calc(var(--i) * 130ms + 60ms);
+  }
+
+  .flow[data-anim].is-in li::before {
+    transform: scaleY(1);
+    transition: transform 0.3s ease calc(var(--i) * 130ms + 150ms);
+  }
+
+  @media (max-width: 767px) {
+    .flow.is-split { grid-template-columns: minmax(0, 1fr); }
+
+    .flow.is-split .lane + .lane {
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .lane { padding: 22px 20px 24px; }
+  }
+</style>

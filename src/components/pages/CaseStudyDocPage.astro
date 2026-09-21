@@ -1,0 +1,133 @@
+---
+/**
+ * A case study written as blocks (see src/data/case-studies.ts).
+ *
+ * The calendar study still has its own component because its content predates
+ * this model; everything written since renders through here.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHeader from '../PageHeader.astro';
+import CaseStudyBlocks from '../CaseStudyBlocks.astro';
+import Icon from '../Icon.astro';
+import { defaultLang, localizePath, t, type Lang } from '../../i18n';
+import { caseStudyBySlug } from '../../data/case-studies';
+import { caseStudyGraph } from '../../seo/schema';
+
+interface Props { slug: string; lang?: Lang }
+const { slug, lang = defaultLang } = Astro.props;
+const d = t(lang);
+const study = caseStudyBySlug(slug);
+const c = d.caseStudyContent[slug as keyof typeof d.caseStudyContent];
+
+const PATH = `/${slug}/`;
+const OG = `/images/og/${slug}-${lang}.jpg`;
+
+const schema = caseStudyGraph(
+  { lang, path: PATH, title: c.title, description: c.metaDescription, image: OG },
+  { topics: study.topics, client: study.client, homeName: d.nav.work }
+);
+---
+
+<Layout
+  title={c.metaTitle}
+  description={c.metaDescription}
+  image={OG}
+  lang={lang}
+  path={PATH}
+  ogType="article"
+  schema={schema}>
+
+  <Header lang={lang} path={PATH} />
+
+  <PageHeader
+    eyebrow={c.eyebrow}
+    title={c.title}
+    back={{ href: localizePath(lang, '/#work'), label: d.common.backToWork }}>
+    <p class="page-lede">{c.lede}</p>
+    <div class="media-chips">
+      {c.chips.map((chip) => <span class="chip">{chip}</span>)}
+    </div>
+  </PageHeader>
+
+  <article>
+    <div class="cs-body">
+      <dl class="cs-meta">
+        {c.meta.map((item) => (
+          <div>
+            <dt>{item.label}</dt>
+            <dd>{item.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    {c.sections.map((section) => (
+      <section class="cs-section">
+        <div class="cs-body">
+          <header class="section-head">
+            <p class="micro-label">{section.label}</p>
+            <h2>{section.heading}</h2>
+          </header>
+        </div>
+
+        <CaseStudyBlocks blocks={section.blocks} figures={c.figures} />
+      </section>
+    ))}
+
+    <section class="cs-section cs-outro">
+      <div class="cs-body">
+        <a href={localizePath(lang, '/#work')} class="back-link">
+          <Icon name="arrow-left" /> {d.common.backToWork}
+        </a>
+      </div>
+    </section>
+  </article>
+
+  <Footer lang={lang} />
+</Layout>
+
+<style>
+  /* Credits block: role, team, scope, platform. Two columns on desktop so it
+     reads as a compact masthead rather than a long list before the prose. */
+  .cs-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 32px;
+    margin: 0;
+    padding: 30px 0 0;
+  }
+
+  .cs-meta dt {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .cs-meta dd {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 160%;
+    color: var(--text);
+  }
+
+  /* The header already carries a back link; this one closes the article and
+     needs no divider above it. */
+  .cs-outro {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+  }
+
+  @media (max-width: 767px) {
+    .cs-meta {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      padding-top: 22px;
+    }
+  }
+</style>
