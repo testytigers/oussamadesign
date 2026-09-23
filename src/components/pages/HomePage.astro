@@ -18,19 +18,18 @@ const PATH = '/';
    can loop seamlessly; the second pass is hidden from assistive tech.
    `h` is the rendered height in px, set per logo: these range from a 0.46
    aspect vertical crest (France Judo) to a 12.5 aspect wordmark (ItaliaRail),
-   so one shared height would make the tall ones tiny. `dim` overrides the
-   grayscale brightness for pale sources that would otherwise wash out. */
+   so one shared height would make the tall ones tiny. */
 const brands = [
   { src: '/images/logos/chanel.svg', name: 'CHANEL', h: 39 },
-  { src: '/images/logos/att.svg', name: 'AT&T', h: 33, dim: 0.5 },
+  { src: '/images/logos/att.svg', name: 'AT&T', h: 33 },
   { src: '/images/logos/carrefour.svg', name: 'Carrefour', h: 44 },
-  { src: '/images/logos/fnac.svg', name: 'Fnac', h: 48, dim: 0.42 },
+  { src: '/images/logos/fnac.svg', name: 'Fnac', h: 48 },
   { src: '/images/logos/wiggli.svg', name: 'Wiggli', h: 24 },
-  { src: '/images/logos/gentis.svg', name: 'Gentis', h: 23, dim: 0.32 },
+  { src: '/images/logos/gentis.svg', name: 'Gentis', h: 23 },
   { src: '/images/logos/italiarail.svg', name: 'ItaliaRail', h: 16 },
-  { src: '/images/logos/european-judo-union.svg', name: 'European Judo Union', h: 20, dim: 0.33 },
+  { src: '/images/logos/european-judo-union.svg', name: 'European Judo Union', h: 20 },
   { src: '/images/logos/france-judo.png', name: 'France Judo', h: 56 },
-  { src: '/images/logos/fff.png', name: 'Fédération Française de Football', h: 54, dim: 0.28 },
+  { src: '/images/logos/fff.png', name: 'Fédération Française de Football', h: 54 },
   { src: '/images/logos/ffa-athle.svg', name: "Fédération Française d'Athlétisme", h: 29 },
   { src: '/images/logos/ippon.svg', name: 'Ippon', h: 21 },
 ];
@@ -47,32 +46,23 @@ const brands = [
 
   <Header lang={lang} path={PATH} />
 
-  <PageHeader title={d.home.heroTitle}>
+  <PageHeader title={d.home.heroTitle} intro>
     <p class="page-lede" set:html={d.home.heroLede} />
     <div class="logo-marquee">
       <div class="logo-track">
         <ul class="logo-group">
           {brands.map((brand) => (
-            <li style={`--logo-h:${brand.h}px;--logo-dim:${brand.dim ?? 0.55}`}><img src={brand.src} alt={brand.name} loading="lazy" decoding="async" /></li>
+            <li style={`--logo-h:${brand.h}px`}><img src={brand.src} alt={brand.name} loading="lazy" decoding="async" /></li>
           ))}
         </ul>
         <ul class="logo-group" aria-hidden="true">
           {brands.map((brand) => (
-            <li style={`--logo-h:${brand.h}px;--logo-dim:${brand.dim ?? 0.55}`}><img src={brand.src} alt="" loading="lazy" decoding="async" /></li>
+            <li style={`--logo-h:${brand.h}px`}><img src={brand.src} alt="" loading="lazy" decoding="async" /></li>
           ))}
         </ul>
       </div>
     </div>
 
-    <img
-      slot="media"
-      src="/images/intro-illustration.webp"
-      alt="Ink illustration of a man in a black suit sitting on a stool, holding a single green apple in both hands"
-      width="900"
-      height="1106"
-      fetchpriority="high"
-      decoding="async"
-    />
   </PageHeader>
 
   <!-- WORK -->

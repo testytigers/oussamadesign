@@ -7,13 +7,15 @@ interface Props {
   title: string;
   /** Renders the shared back link above the eyebrow. */
   back?: { href: string; label: string };
+  /** The home page's full-screen intro: avatar name row, large lede. */
+  intro?: boolean;
 }
 
-const { eyebrow, title, back } = Astro.props;
+const { eyebrow, title, back, intro } = Astro.props;
 const hasMedia = Astro.slots.has('media');
 ---
 
-<header class:list={['page-header', back && 'has-back', hasMedia && 'has-media']}>
+<header class:list={['page-header', back && 'has-back', hasMedia && 'has-media', intro && 'is-intro']}>
   <div class="folio-container">
     <div class="page-header-grid">
       <div class="page-header-text">
@@ -36,3 +38,26 @@ const hasMedia = Astro.slots.has('media');
     </div>
   </div>
 </header>
+
+<script>
+  /* The old intro's parallax: the engraving drifts at a fraction of the scroll
+     speed, so the page slides over the clouds rather than dragging them along.
+     Written to a custom property so the CSS keeps ownership of the layout. */
+  const band = document.querySelector<HTMLElement>('.page-header');
+
+  if (band && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const y = window.scrollY;
+      if (y > band.offsetTop + band.offsetHeight) return;
+      band.style.setProperty('--parallax', `${Math.round(y * 0.35)}px`);
+    };
+    window.addEventListener('scroll', () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    }, { passive: true });
+  }
+</script>

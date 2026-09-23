@@ -9,8 +9,13 @@
 }
 
 /* ============ THEME TOKENS ============ */
-/* Light is the default. Dark is an opt-in feature toggled via [data-theme="dark"]. */
+/* One theme: the original oussama.design look — pure black, white type, #333
+   and #444 hairlines, and a peach → teal → terracotta gradient standing in for
+   a brand colour. There is no light mode; the old site never had one, and the
+   clouds engravings the design is built around only exist in black. */
 :root {
+  color-scheme: dark;
+
   /* Two families, site-wide. Roboto Slab sets every title, Open Sans
      everything else — including the micro-labels and numerals that used to
      call for JetBrains Mono. Declared once here so swapping either family is
@@ -18,68 +23,49 @@
   --font-title: 'Roboto Slab', Georgia, 'Times New Roman', serif;
   --font-body: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --bg: #F6FAF3;
-  --bg-elevated: #FFFFFF;
-  --hero-bg: #E9F4E4;
-  /* Black, and neutral greys throughout. The greens these replaced tinted
-     every paragraph on the site; muted body copy also moves 5.35:1 -> 7.64:1. */
-  --text: #000000;
-  --text-muted: #505050;
-  /* One step back from muted, for glyphs that should recede without
-     becoming unreadable — formula operators and the like. */
-  --text-faint: #767676;
-  --border: #DDE8D9;
-  /* A more contrasted hairline for framing imagery — darker in the light
-     theme, lighter in the dark one, so the frame reads in both. */
-  --border-strong: #C3D5BE;
-  --accent: #1E8E52;
-  --accent-strong: #146B3E;
-  --card-bg: #FFFFFF;
-  /* Black, matching --text. The footer used to carry the logo's green, which
-     made it a second brand statement competing with the work above it. Black
-     ends the page instead of decorating it, and it is the one colour on the
-     site that cannot clash with a case-study thumbnail. White on it is 21:1.
-     Solid, no gradient. */
+  --bg: #000000;
+  --bg-elevated: #111111;
+  --hero-bg: #000000;
+  --text: #FFFFFF;
+  /* 8.9:1 on black. The old site set body copy in pure white at weight 300;
+     one step of grey keeps ledes and descriptions behind the titles. */
+  --text-muted: #ADADAD;
+  /* The old caption grey (#888), for glyphs and captions that should recede. */
+  --text-faint: #8A8A8A;
+  /* The old card border and the old frame/header border. */
+  --border: #333333;
+  --border-strong: #444444;
+  /* The gradient's teal, alone: links, focus rings, hover states. 8.7:1 on
+     black, and it's the one stop of the gradient that reads as "interactive"
+     rather than as decoration. */
+  --accent: #6CABA1;
+  --accent-strong: #8CC7BD;
+  --card-bg: #111111;
+  /* The old site's signature. Used as gradient text on highlights and calls to
+     action, and as the 30% wash a card glows with on hover. */
+  --gradient: linear-gradient(120deg, #FFE6B9 0%, #6CABA1 50%, #D59777 100%);
+  --gradient-wash: linear-gradient(-120deg, #FFE6B9 0%, #6CABA1 50%, #D59777 100%);
+
   --footer-bg: #000000;
   --footer-text: #FFFFFF;
-  /* Lifted from #4ADE80, which only reached AA-large against these greens. */
-  --footer-accent: #7CEFA6;
-  --footer-border: rgba(255, 255, 255, 0.16);
+  --footer-accent: #6CABA1;
+  --footer-border: rgba(255, 255, 255, 0.14);
   --footer-border-strong: rgba(255, 255, 255, 0.32);
   --footer-muted: #D6D6D6;
-  --header-bg: rgba(246, 250, 243, 0.85);
-}
-
-:root[data-theme="dark"] {
-  --bg: #0A0F0B;
-  --bg-elevated: #10160F;
-  --hero-bg: #0E1712;
-  --text: #FFFFFF;
-  --text-muted: #ADADAD;
-  --text-faint: #8A8A8A;
-  --border: #212A21;
-  --border-strong: #38463A;
-  --accent: #4ADE80;
-  --accent-strong: #6FEBA0;
-  --card-bg: #10160F;
-  /* Black in both themes, so the footer is one fixed thing rather than a colour
-     that tracks the theme. Here it sits *below* the page ground (#0A0F0B)
-     rather than above it, so the band reads as depth instead of as a slab —
-     the inverse of the green it replaced, and only about 1.09:1 against the
-     page, which is why the top hairline does the separating. */
-  --footer-bg: #000000;
-  --footer-text: #FFFFFF;
-  --footer-accent: #7CEFA6;
-  --footer-border: rgba(255, 255, 255, 0.14);
-  --footer-border-strong: rgba(255, 255, 255, 0.28);
-  --footer-muted: #D6D6D6;
-  --header-bg: rgba(10, 15, 11, 0.85);
+  /* The old header's translucent black, over a blur. */
+  --header-bg: rgba(0, 0, 0, 0.4);
 }
 
 html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  /* The header is fixed over the page, so in-page anchors (#work, #contact)
+     must land below it rather than under it. */
+  scroll-padding-top: 100px;
 }
 
 body {
@@ -136,7 +122,17 @@ a:hover {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: #000;
+}
+
+/* Gradient text — the old site's highlight. On a link it keeps the link's
+   underline-free treatment; the gradient itself is the affordance. */
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #6CABA1;
 }
 
 /* ============ UTILITIES ============ */
@@ -240,13 +236,13 @@ a:hover {
   transform: translateX(-6px);
 }
 
-/* Pill buttons */
+/* Buttons — the old folio-btn: black, hairline border, 12px corners. */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 13px 22px;
-  border-radius: 999px;
+  border-radius: 12px;
   font-weight: 500;
   font-size: 0.95rem;
   line-height: 1;
@@ -318,56 +314,88 @@ section {
 }
 
 /* ============ HEADER ============ */
+/* A floating bar, not a full-bleed strip: its edges sit exactly on the content
+   edges of .folio-container (1080px minus 2×40px gutter, 2×20px on phones), so
+   the logo lines up with every section below. Fixed rather than sticky, as on
+   the original site: it hovers over the clouds instead of pushing them down,
+   so every page's engraving runs to the very top of the window. */
 .site-header {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  right: 0;
+  width: calc(1080px - 80px);
+  max-width: calc(100% - 40px);
+  margin: 0 auto;
+  box-sizing: border-box;
   background: var(--header-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding: 18px 20px;
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 14px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 9999;
-  transition: opacity 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    background-color 0.4s ease,
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* The photo viewer is fullscreen — the sticky header must not peek through it. */
+/* Scroll states, set by src/scripts/motion.ts. */
+.site-header.is-scrolled {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.site-header.is-tucked {
+  transform: translateY(calc(-100% - 16px));
+}
+
+/* The photo viewer is fullscreen — the fixed header must not peek through it. */
 :root.lightbox-open .site-header {
   opacity: 0;
   pointer-events: none;
 }
 
 @media (min-width: 768px) {
-  .site-header { padding: 18px 40px; }
+  .site-header { max-width: calc(100% - 80px); }
 }
 
 
+/* The old wordmark: monogram, then the name on two lines, with the same
+   proportions as the original image (text cap height a quarter of the
+   monogram, a gap of about 0.4× its height between them). */
 .site-header .logo-mark {
   display: flex;
   flex: none;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
-.site-header .logo-mark img {
-  width: 34px;
-  height: 34px;
+.logo-monogram {
   display: block;
-  object-fit: cover;
-  transform: rotate(10deg);
-  margin-right: 4px;
+  flex: none;
+  width: 44px;
+  height: 44px;
 }
 
-.site-header .logo-mark span {
-  font-family: var(--font-title);
-  font-weight: 700;
-  font-size: 1rem;
+.logo-name {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.94rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
   color: var(--text);
+}
+
+.logo-name > span {
+  display: block;
   margin: 0;
+  line-height: 1.2;
 }
 
 .header-right {
@@ -388,7 +416,7 @@ section {
   gap: 5px;
   font-weight: 500;
   font-size: 0.95rem;
-  color: var(--text-muted);
+  color: var(--text);
 }
 
 .nav-links a:hover,
@@ -461,9 +489,6 @@ section {
   height: 16px;
 }
 
-.theme-toggle .icon-moon { display: none; }
-:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
-:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
 .nav-toggle {
   display: none;
@@ -529,15 +554,20 @@ section {
   .header-icons { gap: 10px; }
 
   .nav-links {
+    /* Drops as a second card under the floating bar, same width and radius. */
     position: absolute;
-    top: calc(100% + 1px);
-    left: 0;
-    right: 0;
+    top: calc(100% + 8px);
+    left: -1px;
+    right: -1px;
     flex-direction: column;
     align-items: flex-start;
     gap: 18px;
-    background: var(--bg-elevated);
-    border-bottom: 1px solid var(--border);
+    /* The old drawer: near-opaque black over a blur, framed like the bar. */
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
     padding: 24px 20px;
     opacity: 0;
     visibility: hidden;
@@ -555,109 +585,148 @@ section {
 @media (max-width: 767px) {
   .header-icons { gap: 8px; }
 
-  /* Six controls don't fit a phone header: at 320px they overflow before any
-     gaps are added, which was crushing the burger. LinkedIn goes — it's the
-     only one repeated elsewhere (twice in the footer). */
-  .header-icons .icon-btn:not(.theme-toggle) { display: none; }
+  /* A phone header keeps the logo, language switch and burger. LinkedIn goes —
+     it's repeated twice in the footer. */
+  .header-icons .icon-btn { display: none; }
 
-  /* One line, never two — the wordmark sets the header's height. */
-  .site-header .logo-mark span {
-    white-space: nowrap;
-    font-size: 0.92rem;
-  }
+  .site-header .logo-mark { gap: 11px; }
+  .logo-monogram { width: 36px; height: 36px; }
+  .logo-name { font-size: 0.86rem; white-space: nowrap; }
 }
 
-/* At 400px and below the wordmark (170px) can't share the row with the
-   controls, so the photo carries the brand on its own. */
-@media (max-width: 400px) {
-  .site-header .logo-mark span { display: none; }
+/* Below 360px the name can't share the row with the controls, so the monogram
+   carries the brand alone. Visually hidden, never display:none — the monogram
+   is decorative, so this text is the link's only name for screen readers, and
+   it keeps the anchor text intact for crawlers. */
+@media (max-width: 359px) {
+  .logo-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* ============ PAGE HEADER ============ */
 /* Every page opens with this exact block, in this exact order:
-   back link → eyebrow → title → lede → meta. Nothing else. */
+   back link → eyebrow → title → lede → meta. Nothing else.
+
+   The clouds engraving fills the band, dimmed a step, and the text sits
+   straight on it — no card. Legibility comes from a black gradient attached to
+   the text block itself (see .page-header-text::before) rather than to the
+   band: every page's band is a different height with a different amount of
+   text, so a gradient measured in percentages of the band would leave some
+   titles on bright stipple. Pinned to the text, the dark ground always starts
+   above the first line, and it reaches pure #000 at the band's bottom edge, so
+   the cover dissolves into the content below with no seam. */
 .page-header {
-  background: var(--hero-bg);
-  border-bottom: 1px solid var(--border);
-  padding: 76px 0 66px;
-}
-
-/* A back link already supplies visual top padding, so the block tightens up. */
-.page-header.has-back {
-  padding-top: 34px;
-}
-
-/* Two columns only when a media slot is filled; otherwise the text keeps the
-   full measure it had before. */
-.page-header-grid {
-  display: grid;
-  gap: 48px;
-}
-
-.page-header.has-media .page-header-grid {
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-  align-items: end;
-}
-
-.page-header.has-media {
-  /* The figure is pulled down onto the section's bottom edge, so anything
-     that overshoots must be clipped rather than bleed into the next section. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* The fixed header ends 84px down (10px offset + 74px bar); the text starts
+     120px below that — a band of sky, never a screenful of it. */
+  padding-top: calc(84px + 118px);
   overflow: hidden;
+  background-color: #000;
+  /* Two layers: a flat 35% black over the whole engraving, then the
+     engraving. Per-layer size and position so the parallax moves only the
+     picture — the dim layer stays pinned to the band. */
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url('/images/hero-clouds.jpg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%, cover;
+  /* --parallax is set on scroll by PageHeader.astro; the engraving's top edge
+     is black sky, so the strip it uncovers is never visible. */
+  background-position: 0 0, center var(--parallax, 0px);
 }
 
+.page-header > .folio-container {
+  width: 1080px;
+}
+
+.page-header-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The text block. Its bottom padding is the band's bottom margin, so the
+   scrim below can run to the band's edge. */
+.page-header-text {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 72px;
+}
+
+/* The scrim: full-bleed, starting 120px above the text. It is already 70%
+   black where the first line begins, 85% halfway down the text, and solid
+   black at the band's bottom edge — the same black as the section below.
+   (`left/right` reach the viewport edges from a centred block; the band's
+   overflow: hidden trims the scrollbar's worth of excess.) */
+.page-header-text::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -120px;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0.7) 120px,
+    rgba(0, 0, 0, 0.85) 60%,
+    #000 100%
+  );
+  pointer-events: none;
+}
+
+/* An optional image slot, standing on the text block among the clouds. */
 .page-header-media {
-  align-self: end;
-  justify-self: end;
+  order: -1;
+  align-self: flex-end;
+  margin-right: 34px;
+  line-height: 0;
 }
 
 .page-header-media img {
   display: block;
   width: auto;
   max-width: 100%;
-  max-height: 440px;
-  margin: 0 0 -66px;
-}
-
-/* Stacked, but still sitting on the section's bottom edge. The negative
-   margin has to match .page-header's bottom padding, which changes at 767px. */
-@media (max-width: 900px) {
-  .page-header.has-media .page-header-grid {
-    /* minmax(0, 1fr), never a bare 1fr: the auto minimum lets the track grow
-       to the lede's 58ch measure and overflow the container. */
-    grid-template-columns: minmax(0, 1fr);
-    gap: 34px;
-  }
-
-  .page-header-media {
-    justify-self: center;
-  }
-
-  .page-header-media img {
-    max-height: 320px;
-  }
-}
-
-@media (max-width: 767px) {
-  .page-header-media img {
-    max-height: 280px;
-    margin-bottom: -46px;
-  }
+  max-height: min(36vh, 380px);
+  margin: 0;
 }
 
 .page-header h1 {
   font-size: clamp(2rem, 4.4vw, 3rem);
   line-height: 110%;
   letter-spacing: -0.015em;
-  /* Long titles otherwise wrap to three lines with the right-hand half of the
-     column empty. 32ch is where every current title drops to two lines and
-     fills ~87%; past that the gain is nil and the measure just runs at the
-     container edge. Pages with a media slot are unaffected — their text
-     column is narrower than this cap anyway.
-     Note `ch` is font-relative: this was 28ch under the previous grotesque and
-     had to be re-measured for Roboto Slab, whose zero is narrower. Re-check it
-     if the title face ever changes again. */
-  max-width: 32ch;
+  /* Full column width, like the text beneath it. */
+  max-width: none;
   margin: 0;
+}
+
+/* Home: the old intro's name row — round avatar beside the name. */
+.page-header.is-intro h1 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: none;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  margin-bottom: 24px;
+}
+
+.page-header.is-intro h1::before {
+  content: '';
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #111 url('/images/avatar.webp') center / cover no-repeat;
 }
 
 .page-header .micro-label {
@@ -668,33 +737,89 @@ section {
   color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 180%;
-  max-width: 58ch;
+  max-width: none;
   margin: 20px 0 0;
 }
 
+/* The old intro set its paragraph large and in full white. */
+.page-header.is-intro .page-lede {
+  color: var(--text);
+  font-size: 1.22rem;
+  max-width: none;
+  margin: 0;
+}
+
+/* Highlighted phrases carry the old gradient. They are links, so the gradient
+   is the affordance — and the only colour in the card. */
 .page-lede a {
-  color: var(--accent);
-  font-weight: 500;
+  font-weight: 600;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .page-header .media-chips {
   margin: 28px 0 0;
 }
 
+@media (max-width: 900px) {
+  .page-header-media {
+    align-self: center;
+    margin-right: 0;
+  }
+
+  .page-header-media img {
+    max-height: 300px;
+  }
+}
+
 @media (max-width: 767px) {
-  .page-header { padding: 52px 0 46px; }
-  .page-header.has-back { padding-top: 26px; }
+  .page-header {
+    min-height: 0;
+    padding-top: 120px;
+  }
+
+  .page-header-text {
+    padding-bottom: 52px;
+  }
+
+  /* A shorter lead-in on phones, where the text starts close under the header
+     and a 200px fade would swallow the engraving. Same 70% at the first line. */
+  .page-header-text::before {
+    top: -130px;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0.7) 130px,
+      rgba(0, 0, 0, 0.85) 60%,
+      #000 100%
+    );
+  }
+
+  .page-header-media img {
+    max-height: 250px;
+  }
+
+  .page-header.is-intro h1::before {
+    width: 48px;
+    height: 48px;
+  }
+
+  .page-header.is-intro .page-lede {
+    font-size: 1.05rem;
+  }
+
   .back-link { margin-bottom: 24px; }
 }
 
-/* Infinite logo marquee.
-   Width is pinned to the lede's measure (58ch at the lede's own font-size) so
-   the strip never runs wider than the paragraph above it. */
+/* Infinite logo marquee — the old "Worked on" strip, now the card's last row,
+   running the card's full width under a hairline. */
 .logo-marquee {
   position: relative;
-  max-width: 58ch;
-  font-size: 1.05rem;
-  margin-top: 34px;
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
   overflow: hidden;
   /* Soft edges, so logos enter and leave instead of being chopped off. */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
@@ -729,36 +854,27 @@ section {
   line-height: 0;
 }
 
-/* One monochrome treatment for the whole strip. The source logos run from
-   white-on-dark (Gentis, which vanished on the light hero) through gold and
-   red, so brand colours read as noise at 24px — and one of them disappeared. */
+/* Flat white silhouettes, as on the old site: the one treatment that keeps
+   every logo visible on black, from the white Gentis wordmark to the gold and
+   red crests. */
 .logo-group img {
   height: var(--logo-h, 24px);
   width: auto;
   max-width: none;
   object-fit: contain;
-  /* Grayscale rather than a flat silhouette: it keeps the detail inside the
-     federation crests while still darkening the white wordmark enough to read. */
-  filter: grayscale(1) brightness(var(--logo-dim, 0.55)) contrast(1.15);
-  opacity: 0.62;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
   transition: opacity 0.3s ease;
 }
 
 .logo-marquee:hover .logo-group img {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* The track holds exactly two identical passes, so -50% is one full pass. */
 @keyframes logo-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
-}
-
-/* Inverting luminance would hide the pale logos, so dark mode uses flat white
-   silhouettes — the one treatment that keeps every logo visible on a dark ground. */
-:root[data-theme="dark"] .logo-group img {
-  filter: brightness(0) invert(1);
-  opacity: 0.62;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -790,28 +906,61 @@ section {
   gap: 28px;
 }
 
+/* Cards take the old site's folio-card: a #111 slab, the image inset and
+   framed in #444, and on hover the fill clears to let the gradient glow
+   through at 30% behind the content. `isolation` keeps the wash's negative
+   z-index inside the card, above its fill and below its content. */
 .media-row {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 0.85fr 1fr;
   align-items: stretch;
+  padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 26px;
+  border-radius: 20px;
   background: var(--card-bg);
   overflow: hidden;
   color: var(--text);
-  transition: border-color 0.35s ease, transform 0.35s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.35s ease;
+}
+
+.media-row::after,
+.event-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--gradient-wash);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
 }
 
 a.media-row:hover {
   opacity: 1;
   transform: translateY(-4px);
-  border-color: var(--accent);
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+a.media-row:hover::after,
+a.event-card:hover::after {
+  opacity: 0.3;
 }
 
 .media-row-media {
   position: relative;
-  min-height: 360px;
+  min-height: 320px;
   overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  transition: border-color 0.3s ease;
+}
+
+a.media-row:hover .media-row-media,
+a.event-card:hover .event-card-media {
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .media-row-media img {
@@ -830,13 +979,14 @@ a.media-row:hover .media-row-media img {
 
 .media-badge {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  top: 14px;
+  left: 14px;
   margin: 0;
   padding: 8px 14px;
   border-radius: 999px;
-  background: #0B1710;
-  color: #F1FBF2;
+  background: #000;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
   font-family: var(--font-body);
   font-size: 0.7rem;
   font-weight: 500;
@@ -848,7 +998,7 @@ a.media-row:hover .media-row-media img {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 46px 48px;
+  padding: 26px 22px 26px 44px;
 }
 
 /* h2 on the events index (its cards sit directly under the page h1) and h3 on
@@ -885,13 +1035,21 @@ a.media-row:hover .media-row-media img {
   line-height: 1.2;
 }
 
+/* The old "color" button's gradient text, without the box. The arrow is an
+   SVG, which background-clip can't reach, so it takes the gradient's last stop
+   — the colour the text is at by the time it gets there. */
 .media-cta {
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 10px;
-  color: var(--accent);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.98rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #D59777;
 }
 
 a.media-row:hover .arrow {
@@ -906,16 +1064,18 @@ a.media-row:hover .arrow {
 @media (max-width: 860px) {
   .media-row {
     grid-template-columns: 1fr;
-    border-radius: 22px;
+    padding: 14px;
+    border-radius: 18px;
   }
 
   .media-row-media {
     min-height: 0;
     aspect-ratio: 16 / 10;
+    border-radius: 12px;
   }
 
   .media-row-body {
-    padding: 28px 24px 30px;
+    padding: 24px 10px 12px;
   }
 }
 
@@ -1098,20 +1258,24 @@ a.media-row:hover .arrow {
 }
 
 .event-card {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
+  padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 26px;
+  border-radius: 20px;
   background: var(--card-bg);
   overflow: hidden;
   color: var(--text);
-  transition: border-color 0.35s ease, transform 0.35s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.35s ease;
 }
 
 a.event-card:hover {
   opacity: 1;
   transform: translateY(-4px);
-  border-color: var(--accent);
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 /* The source photos are 720x1280 portraits, so the card crops to landscape.
@@ -1121,6 +1285,9 @@ a.event-card:hover {
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  transition: border-color 0.3s ease;
 }
 
 .event-card-media img {
@@ -1140,7 +1307,7 @@ a.event-card:hover .event-card-media img {
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 30px 32px 32px;
+  padding: 26px 10px 8px;
 }
 
 .event-card-body h3 {
@@ -1170,7 +1337,9 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
     gap: 20px;
   }
 
-  .event-card-body { padding: 24px 22px 26px; }
+  .event-card { padding: 14px; border-radius: 18px; }
+  .event-card-media { border-radius: 12px; }
+  .event-card-body { padding: 22px 8px 8px; }
   .event-card-body h3 { font-size: 1.2rem; }
 }
 
@@ -1241,79 +1410,167 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   overflow: hidden;
   background: var(--footer-bg);
   color: var(--footer-text);
-  padding: 46px 20px 26px;
   margin-top: 40px;
 }
 
-/* Only dark mode needs this. Against the light page black draws its own edge;
-   against #0A0F0B it does not, and without a hairline the footer would just be
-   where the page stopped being visible. */
-:root[data-theme="dark"] .site-footer {
-  border-top: 1px solid var(--footer-border);
-}
-
-.footer-cta {
+/* The door scene. The engraving fades to black at the top, so it rises out of
+   the footer's black rather than starting at a hard edge, and it is anchored
+   to the bottom so the path through the clouds always leads to the door. */
+.door-scene {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: min(100vh, 880px);
+  padding: 140px 20px 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.door-scene-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  margin: 0;
+  pointer-events: none;
+}
+
+.door-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  padding-bottom: 46px;
-  /* No margin below the rule: the 56px here used to clear the four-column
-     block that sat between this and the bottom bar. With that gone, the bar's
-     own 26px padding-top mirrors the footer's 26px bottom padding. */
-  border-bottom: 1px solid var(--footer-border);
 }
 
-.footer-cta-text {
-  flex: 1 1 360px;
-}
-
-.footer-cta .micro-label {
-  color: var(--footer-accent);
-}
-
-.footer-cta h2 {
+.door-title {
   color: var(--footer-text);
-  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
-  line-height: 118%;
-  margin-bottom: 0;
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  line-height: 100%;
+  margin: 0 0 26px;
+  /* The engraving is busy white stipple; a soft black halo keeps the title
+     off it without drawing a box. */
+  text-shadow: 0 0 28px #000, 0 0 12px #000;
 }
 
-.footer-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-@media (max-width: 767px) {
-  .footer-cta {
-    gap: 22px;
-    padding-bottom: 36px;
-    margin-bottom: 44px;
-  }
-
-  .footer-actions {
-    justify-content: flex-start;
-  }
-}
-
+/* The old "color" button: black, a brighter border, and gradient text. */
 .btn-primary {
-  background: var(--footer-text);
-  color: var(--footer-bg);
+  background: #000;
+  border-color: rgba(255, 255, 255, 0.5);
+  padding: 16px 26px;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
-.btn-ghost {
-  border-color: var(--footer-border-strong);
-  color: var(--footer-text);
+/* On an inner label: clipping the button's own background to its text would
+   take the black fill with it. */
+.btn-primary .btn-label {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
 }
 
-.btn-ghost:hover {
+.btn-primary:hover {
   border-color: var(--footer-text);
 }
 
+/* The door: an arch cut from a 30px black frame, standing on the bottom edge
+   so it opens straight onto the black bar below. */
+.door {
+  position: relative;
+  box-sizing: border-box;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  height: 440px;
+  margin-top: 20px;
+  background: #000;
+  border: 30px solid #000;
+  border-bottom: 0;
+  border-radius: 200px 200px 0 0;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.door-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* 200px outer radius minus the 30px frame. */
+  border-radius: 170px 170px 0 0;
+  border: 1px solid #333;
+  border-bottom: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.door-face img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  margin: 0;
+}
+
+.door-front { transform: rotateY(0deg); }
+.door-back { transform: rotateY(180deg); }
+.door.is-open .door-front { transform: rotateY(-180deg); }
+.door.is-open .door-back { transform: rotateY(0deg); }
+
+.door-contacts {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.door-contacts a {
+  padding: 6px 12px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #000;
+  color: var(--footer-text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.25s ease;
+}
+
+.door-contacts a:hover,
+.door-contacts a:focus-visible {
+  opacity: 1;
+  border-color: var(--footer-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door-face { transition: none; }
+}
+
+@media (max-width: 767px) {
+  .door-scene { padding-top: 110px; min-height: 0; }
+  .door-title { font-size: 2.6rem; margin-bottom: 22px; }
+  .door { width: 320px; height: 380px; border-width: 24px; border-bottom: 0; }
+  .door-face { border-radius: 176px 176px 0 0; }
+}
+
+/* No side padding: .folio-container supplies the gutter, so the bar lines up
+   with the content edges like the header does. */
+.footer-bottom-wrap {
+  padding-bottom: 26px;
+}
 
 .footer-bottom {
   display: flex;
@@ -1362,3 +1619,134 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ============ MOTION ============ */
+/* One easing for everything that arrives: a fast start that settles softly
+   (expo-out), so movement reads as deliberate rather than bouncy. */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Native smooth anchors as a fallback; once Lenis runs it takes over (its
+   stylesheet turns this off under html.lenis-smooth). */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Scroll reveals. `.reveal` is only ever added by motion.ts, so without the
+   script nothing is hidden. An animation, not a transition, and `translate`,
+   not `transform`: cards already transition `transform` for their hover lift,
+   and this must not clobber it. */
+.reveal {
+  opacity: 0;
+}
+
+.reveal.is-revealed {
+  animation: reveal-up 0.9s var(--ease-out) var(--reveal-delay, 0ms) both;
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; translate: 0 28px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* Cover entrance: back link, eyebrow, title, intro and logos cascade in on
+   load. Pure CSS, so it plays even before any script arrives. */
+@media (prefers-reduced-motion: no-preference) {
+  .page-header-text > * {
+    animation: reveal-up 1s var(--ease-out) both;
+  }
+  .page-header-text > :nth-child(2) { animation-delay: 0.07s; }
+  .page-header-text > :nth-child(3) { animation-delay: 0.14s; }
+  .page-header-text > :nth-child(4) { animation-delay: 0.21s; }
+  .page-header-text > :nth-child(5) { animation-delay: 0.28s; }
+  .page-header-text > :nth-child(n + 6) { animation-delay: 0.35s; }
+
+  /* The scrim and engraving settle in a beat behind the type. */
+  .page-header {
+    animation: cover-in 1.4s ease both;
+  }
+}
+
+@keyframes cover-in {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* Card spotlight: a soft light under the pointer, above the card's fill and
+   below its content (the same stacking slot as the hover wash). */
+.media-row::before,
+.event-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.08),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+a.media-row:hover::before,
+a.event-card:hover::before {
+  opacity: 1;
+}
+
+/* Pressed states — a small give under the finger or click. */
+.btn:active,
+.icon-btn:active,
+.nav-toggle:active {
+  transform: scale(0.97);
+}
+
+/* Reading progress on long-form pages, drawn in the site gradient. */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 10001;
+  background: var(--gradient);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* Page transitions: a native cross-document fade between pages, with the
+   header held in place so only the content changes. Browsers without support
+   navigate normally. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  .site-header {
+    view-transition-name: site-header;
+  }
+
+  ::view-transition-old(root) {
+    animation: vt-out 0.28s ease both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 0.5s var(--ease-out) both;
+  }
+}
+
+@keyframes vt-out {
+  to { opacity: 0; }
+}
+
+@keyframes vt-in {
+  from { opacity: 0; translate: 0 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; }
+}
+

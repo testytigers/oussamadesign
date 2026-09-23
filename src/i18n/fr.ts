@@ -13,7 +13,6 @@ export const fr = {
 
   a11y: {
     toggleNav: 'Ouvrir la navigation',
-    toggleTheme: 'Basculer le mode sombre',
     linkedin: 'LinkedIn',
     email: 'E-mail',
     phone: 'Téléphone',
@@ -84,10 +83,10 @@ export const fr = {
   },
 
   footer: {
-    microLabel: 'Me contacter',
-    heading: 'Un produit qui mérite une meilleure UX ?',
-    startConversation: 'Démarrer la conversation',
-    downloadResume: 'Télécharger le CV',
+    doorTitle: ['Envie de dire', 'bonjour ?'],
+    doorOpen: 'Restons en contact !',
+    doorClose: 'Fermer la porte',
+    doorLabel: 'Coordonnées',
     brandLine: "UX Designer Senior & concepteur de systèmes IA. Je conçois des produits que les gens utilisent jusqu'au bout.",
     navigate: 'Navigation',
     elsewhere: 'Ailleurs',

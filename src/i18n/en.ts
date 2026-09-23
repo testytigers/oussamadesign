@@ -10,7 +10,6 @@ export const en = {
 
   a11y: {
     toggleNav: 'Toggle navigation',
-    toggleTheme: 'Toggle dark mode',
     linkedin: 'LinkedIn',
     email: 'Email',
     phone: 'Phone',
@@ -81,10 +80,11 @@ export const en = {
   },
 
   footer: {
-    microLabel: 'Get in touch',
-    heading: 'Have a product that deserves better UX?',
-    startConversation: 'Start a conversation',
-    downloadResume: 'Download resume',
+    /* The door footer. Two lines, split so the break is layout, not markup. */
+    doorTitle: ['Wanna say', 'Hello?'],
+    doorOpen: "Let's connect!",
+    doorClose: 'Close the door',
+    doorLabel: 'Contact details',
     brandLine: 'Sr UX Designer & AI System Builder, designing products people actually finish using.',
     navigate: 'Navigate',
     elsewhere: 'Elsewhere',

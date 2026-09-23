@@ -1,44 +1,106 @@
 ---
-import Icon from './Icon.astro';
-import { defaultLang, localizePath, t, type Lang } from '../i18n';
+import { defaultLang, t, type Lang } from '../i18n';
 
 interface Props { lang?: Lang }
 const { lang = defaultLang } = Astro.props;
 const d = t(lang);
-const home = localizePath(lang, '/');
 ---
 
+<!--
+  The door footer, revived from the pre-Astro site. A field of clouds full of
+  doorways, with one real door standing at the bottom edge: its front is the
+  envelope-eyed portrait, and "Let's connect!" turns it round to the contact
+  details on the back.
+
+  The toggle is the button, not the door. The back face holds links, and a
+  link can't live inside a button, so the door itself is only a click target
+  for the pointer (wired in the script) while the keyboard path runs through
+  the real <button> with aria-expanded. Whichever face is turned away is
+  `inert`, so its links can't be tabbed to while facing the wall.
+-->
 <footer class="site-footer" id="contact">
-  <div class="folio-container">
-    <div class="footer-cta">
-      <div class="footer-cta-text">
-        <p class="micro-label">{d.footer.microLabel}</p>
-        <h2>{d.footer.heading}</h2>
-      </div>
-      <div class="footer-actions">
-        <a class="btn btn-primary" href="mailto:musamathemes@gmail.com">
-          {d.footer.startConversation} <Icon name="arrow-right" />
-        </a>
-        <a class="btn btn-ghost" href="/resume.pdf" target="_blank">
-          {d.footer.downloadResume} <Icon name="external" />
-        </a>
+  <div class="door-scene">
+    <img class="door-scene-art" src="/images/footer/door-scene.webp" alt="" width="1280" height="775" loading="lazy" decoding="async" />
+
+    <div class="door-stage">
+      <h2 class="door-title">{d.footer.doorTitle[0]}<br />{d.footer.doorTitle[1]}</h2>
+
+      <button
+        type="button"
+        class="btn btn-primary door-toggle"
+        aria-expanded="false"
+        aria-controls="contact-door-back"
+        data-open={d.footer.doorOpen}
+        data-close={d.footer.doorClose}
+      ><span class="btn-label">{d.footer.doorOpen}</span></button>
+
+      <div class="door" data-door>
+        <div class="door-face door-front" aria-hidden="true">
+          <img src="/images/footer/door-front.webp" alt="" width="564" height="564" loading="lazy" decoding="async" />
+        </div>
+
+        <div class="door-face door-back" id="contact-door-back" role="group" aria-label={d.footer.doorLabel} inert>
+          <img src="/images/footer/door-back.webp" alt="" width="640" height="640" loading="lazy" decoding="async" />
+          <div class="door-contacts">
+            <a href="tel:+212698996201">+212 6 98 99 62 01</a>
+            <a href="mailto:musamathemes@gmail.com">musamathemes@gmail.com</a>
+            <a href="https://www.linkedin.com/in/oussamabougnouch/" target="_blank" rel="noopener">LinkedIn</a>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="footer-bottom">
-      <p>© {new Date().getFullYear()} Oussama Bougnouch. {d.footer.rights}</p>
+  <div class="footer-bottom-wrap">
+    <div class="folio-container">
+      <div class="footer-bottom">
+        <p>© {new Date().getFullYear()} Oussama Bougnouch. {d.footer.rights}</p>
 
-      <div class="footer-socials">
-        <a href="https://www.linkedin.com/in/oussamabougnouch/" target="_blank" aria-label={d.a11y.linkedin}>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
-        </a>
-        <a href="mailto:musamathemes@gmail.com" aria-label={d.a11y.email}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
-        </a>
-        <a href="tel:+212698996201" aria-label={d.a11y.phone}>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
-        </a>
+        <div class="footer-socials">
+          <a href="https://www.linkedin.com/in/oussamabougnouch/" target="_blank" rel="noopener" aria-label={d.a11y.linkedin}>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
+          <a href="mailto:musamathemes@gmail.com" aria-label={d.a11y.email}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+          </a>
+          <a href="tel:+212698996201" aria-label={d.a11y.phone}>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </footer>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.door-toggle');
+  const label = toggle?.querySelector<HTMLElement>('.btn-label');
+  const door = document.querySelector<HTMLElement>('[data-door]');
+  const front = door?.querySelector<HTMLElement>('.door-front');
+  const back = door?.querySelector<HTMLElement>('.door-back');
+
+  if (toggle && label && door && front && back) {
+    const set = (open: boolean) => {
+      door.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      label.textContent = (open ? toggle.dataset.close : toggle.dataset.open) ?? '';
+      back.inert = !open;
+      front.inert = open;
+    };
+    const flip = () => set(!door.classList.contains('is-open'));
+
+    toggle.addEventListener('click', flip);
+    /* Pointer shortcut only — keyboard users have the button. A click that
+       lands on a contact link must follow the link, not slam the door. */
+    door.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) return;
+      flip();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && door.classList.contains('is-open')) {
+        set(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,33 @@
+---
+/**
+ * The OB monogram from the original site, redrawn as vector from the 72px
+ * raster it shipped as (public/images/logo.png): an outer ring, the B's stem,
+ * its bowl tangent to the ring at the top, and the O tangent at the bottom,
+ * stroked in the site gradient running top to bottom. Measured by fitting the
+ * circles to the raster's pixels, so the geometry is the original's, not an
+ * approximation of it.
+ *
+ * Decorative by design: it always sits beside the name in live text, which is
+ * what screen readers announce and what search engines read as the link text.
+ */
+interface Props { class?: string }
+const { class: className } = Astro.props;
+---
+
+<svg class={className} viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- userSpaceOnUse, not the default bounding box: the stem is a vertical
+         line with zero width, and a bounding-box gradient on it renders nothing. -->
+    <linearGradient id="ob-monogram-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="1" x2="0" y2="71">
+      <stop offset="0" stop-color="#FFE6B9" />
+      <stop offset="0.5" stop-color="#6CABA1" />
+      <stop offset="1" stop-color="#D59777" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#ob-monogram-gradient)" stroke-width="1.75">
+    <circle cx="36" cy="36" r="35" />
+    <circle cx="36" cy="48.75" r="22.25" />
+    <path d="M36.93 1v70" />
+    <path d="M36.93 1.53A17 17 0 0 1 36.93 35.47" />
+  </g>
+</svg>
