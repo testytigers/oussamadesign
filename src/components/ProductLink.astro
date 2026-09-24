@@ -1,0 +1,18 @@
+---
+/**
+ * Evidence link to the live product a case study shipped in. Shows the host
+ * in the link text so the reader sees at a glance it leads off-site to the
+ * real thing. Followed (no rel="nofollow"): it is a genuine citation.
+ */
+import Icon from './Icon.astro';
+import { t, type Lang } from '../i18n';
+
+interface Props { lang: Lang; product: { name: string; url: string } }
+const { lang, product } = Astro.props;
+const host = new URL(product.url).hostname.replace(/^www\./, '');
+---
+
+<a class="product-link" href={product.url} target="_blank" rel="noopener" title={product.name}>
+  {t(lang).common.liveProduct(host)}
+  <Icon name="external" />
+</a>

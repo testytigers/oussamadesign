@@ -11,6 +11,7 @@ import Footer from '../Footer.astro';
 import PageHeader from '../PageHeader.astro';
 import CaseStudyBlocks from '../CaseStudyBlocks.astro';
 import Icon from '../Icon.astro';
+import ProductLink from '../ProductLink.astro';
 import { defaultLang, localizePath, t, type Lang } from '../../i18n';
 import { caseStudyBySlug } from '../../data/case-studies';
 import { caseStudyGraph } from '../../seo/schema';
@@ -26,7 +27,7 @@ const OG = `/images/og/${slug}-${lang}.jpg`;
 
 const schema = caseStudyGraph(
   { lang, path: PATH, title: c.title, description: c.metaDescription, image: OG },
-  { topics: study.topics, client: study.client, homeName: d.nav.work }
+  { topics: study.topics, client: study.client, product: study.product, homeName: d.nav.work }
 );
 ---
 
@@ -49,6 +50,7 @@ const schema = caseStudyGraph(
     <div class="media-chips">
       {c.chips.map((chip) => <span class="chip">{chip}</span>)}
     </div>
+    {study.product && <ProductLink lang={lang} product={study.product} />}
   </PageHeader>
 
   <article>

@@ -67,9 +67,16 @@ export interface CaseStudyData {
   cardImage: string;
   /** Organisation the work was done for — feeds `mentions` in schema. */
   client: string;
+  /** The live product the work shipped in. Linked from the page as evidence. */
+  product?: { name: string; url: string };
   /** Subjects, for `about`/`keywords` in structured data. */
   topics: string[];
 }
+
+const WIGGLI_ATS = {
+  name: 'Wiggli Applicant Tracking System',
+  url: 'https://www.wiggli.io/platform/applicant-tracking-system',
+};
 
 export const caseStudies: CaseStudyData[] = [
   {
@@ -81,6 +88,9 @@ export const caseStudies: CaseStudyData[] = [
        `{lang}` token goes unused here. */
     cardImage: '/images/work/matching-candidate-card.webp',
     client: 'Wiggli',
+    /* The shipped product this study describes — cited in the page and in
+       structured data as evidence the work is real. */
+    product: WIGGLI_ATS,
     topics: [
       'Candidate Matching',
       'Applicant Tracking Systems',
@@ -98,6 +108,9 @@ export const caseStudies: CaseStudyData[] = [
        uncropped. Language-neutral, so the `{lang}` token goes unused. */
     cardImage: '/images/work/calendar-scheduling-card.webp',
     client: 'Wiggli',
+    /* The shipped product this study describes — cited in the page and in
+       structured data as evidence the work is real. */
+    product: WIGGLI_ATS,
     topics: [
       'UX Design',
       'Recruitment Software',

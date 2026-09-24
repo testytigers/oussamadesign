@@ -4,14 +4,17 @@ import Header from '../Header.astro';
 import Footer from '../Footer.astro';
 import PageHeader from '../PageHeader.astro';
 import Icon from '../Icon.astro';
+import ProductLink from '../ProductLink.astro';
 import { defaultLang, localizePath, t, type Lang } from '../../i18n';
 import { caseStudyGraph } from '../../seo/schema';
+import { caseStudyBySlug } from '../../data/case-studies';
 
 interface Props { lang?: Lang }
 const { lang = defaultLang } = Astro.props;
 const c = t(lang).caseStudy;
 const d = t(lang);
 const PATH = '/wiggli-calendar-ux-case-study/';
+const study = caseStudyBySlug('wiggli-calendar-ux-case-study');
 const IMG = '/images/work';
 const OG = `/images/og/case-study-${lang}.jpg`;
 
@@ -19,7 +22,8 @@ const schema = caseStudyGraph(
   { lang, path: PATH, title: c.title, description: c.metaDescription, image: OG },
   {
     topics: ['UX Design', 'Recruitment Software', 'Calendar Scheduling', 'B2B SaaS', 'Design Systems'],
-    client: 'Wiggli',
+    client: study.client,
+    product: study.product,
     homeName: d.nav.work,
   }
 );
@@ -44,6 +48,7 @@ const schema = caseStudyGraph(
     <div class="media-chips">
       {c.chips.map((chip) => <span class="chip">{chip}</span>)}
     </div>
+    {study.product && <ProductLink lang={lang} product={study.product} />}
   </PageHeader>
 
   <article>

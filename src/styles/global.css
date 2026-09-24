@@ -763,6 +763,37 @@ section {
   margin: 28px 0 0;
 }
 
+/* Evidence link to the live product (ProductLink.astro). */
+.product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(108, 171, 161, 0.4);
+  text-underline-offset: 4px;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+
+.product-link:hover {
+  opacity: 1;
+  color: var(--accent-strong);
+  text-decoration-color: currentColor;
+}
+
+.product-link .icon {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.35s var(--ease-out, ease);
+}
+
+.product-link:hover .icon {
+  transform: translate(2px, -2px);
+}
+
 @media (max-width: 900px) {
   .page-header-media {
     align-self: center;

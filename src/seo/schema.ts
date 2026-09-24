@@ -314,11 +314,35 @@ export function eventGraph(
 /** The case study — an Article, the type most likely to be quoted back. */
 export function caseStudyGraph(
   base: PageBase,
-  opts: { topics: string[]; client: string; homeName: string; datePublished?: string }
+  opts: {
+    topics: string[];
+    client: string;
+    homeName: string;
+    product?: { name: string; url: string };
+    datePublished?: string;
+  }
 ) {
   const articleId = `${canonicalUrl(base.lang, base.path)}#article`;
+  /* The client as the same Organization node the home page declares (shared
+     @id), and the product as a SoftwareApplication it makes, with its live URL:
+     the page's evidence that this work shipped in a real, public product. */
+  const org = clientNodes().find((n) => n.name === opts.client);
+  const orgRef = org ? { '@id': org['@id'] } : { '@type': 'Organization', name: opts.client };
+  const productNode = opts.product
+    ? {
+        '@type': 'SoftwareApplication',
+        '@id': `${opts.product.url}#software`,
+        name: opts.product.name,
+        url: opts.product.url,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+        author: orgRef,
+      }
+    : null;
   return graph([
     ...common(base.lang),
+    ...(org ? [org] : []),
+    ...(productNode ? [productNode] : []),
     breadcrumb(base.lang, [{ name: opts.homeName, path: '/' }, { name: base.title, path: base.path }]),
     webPage(base, 'WebPage', { mainEntity: { '@id': articleId } }),
     {
@@ -335,7 +359,8 @@ export function caseStudyGraph(
       isPartOf: { '@id': WEBSITE_ID },
       about: opts.topics,
       keywords: opts.topics.join(', '),
-      mentions: { '@type': 'Organization', name: opts.client },
+      mentions: productNode ? [orgRef, { '@id': productNode['@id'] }] : orgRef,
+      ...(opts.product ? { citation: opts.product.url } : {}),
       ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     },
   ]);

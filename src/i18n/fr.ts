@@ -30,6 +30,7 @@ export const fr = {
     backToEvents: 'Retour aux événements',
     backToWork: 'Retour aux projets',
     viewGallery: 'Voir la galerie',
+    liveProduct: (host: string) => `Voir le produit en ligne sur ${host}`,
     readCaseStudy: "Lire l'étude de cas",
     caseStudyBadge: 'Étude de cas',
     slides: 'slides',

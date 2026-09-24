@@ -28,6 +28,7 @@ export const en = {
     backToWork: 'Back to work',
     viewGallery: 'View gallery',
     readCaseStudy: 'Read full case study',
+    liveProduct: (host: string) => `See the live product on ${host}`,
     caseStudyBadge: 'Case study',
     slides: 'slides',
     photos: 'photos',

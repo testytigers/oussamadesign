@@ -21,7 +21,8 @@ export const GET: APIRoute = () => {
 
   const studyLines = caseStudies.map((study) => {
     const card = en.caseStudyCards[study.slug as keyof typeof en.caseStudyCards];
-    return `- [${card.title}](${url(`/${study.slug}/`)}): ${card.description}`;
+    const live = study.product ? ` Shipped in ${study.product.name}: ${study.product.url}` : '';
+    return `- [${card.title}](${url(`/${study.slug}/`)}): ${card.description}${live}`;
   });
 
   const eventLines = events.map((event) => {
