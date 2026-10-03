@@ -6,14 +6,14 @@ export const eventsEn = {
     eyebrow: 'Workshop · Part 1',
     title: 'Beneath the Skull of AI',
     lede:
-      'How an LLM actually works under the hood — choosing a model, the engine that runs it, the hardware that limits it, and the quantization and context tricks that make a large model fit on a laptop.',
+      'How an LLM actually works under the hood: choosing a model, the engine that runs it, the hardware that limits it, and the quantization and context tricks that make a large model fit on a laptop.',
     cardDescription:
-      'How an LLM actually works under the hood — picking a model, the engine that runs it, the hardware that limits it, and the quantization and context tricks that make a large model fit on a laptop.',
+      'How an LLM actually works under the hood: picking a model, the engine that runs it, the hardware that limits it, and the quantization and context tricks that make a large model fit on a laptop.',
     /* Home-page teaser, kept under 120 characters so the two cards stay
        the same height in the grid. */
     shortDescription:
-      'How an LLM actually works under the hood — picking a model, the engine that runs it, quantization and context.',
-    deckLabel: 'Beneath the Skull of AI — workshop slides',
+      'How an LLM actually works under the hood: picking a model, the engine that runs it, quantization and context.',
+    deckLabel: 'Beneath the Skull of AI: workshop slides',
     photos: {
       'opening-the-room': {
         caption: 'Opening the room',
@@ -66,8 +66,8 @@ export const eventsEn = {
     /* Home-page teaser, kept under 120 characters so the two cards stay
        the same height in the grid. */
     shortDescription:
-      'From LLM to agent — the reasoning loop, the tools that give it hands, and the reasons agents fail in practice.',
-    deckLabel: 'Introduction to Agentic AI — workshop slides',
+      'From LLM to agent: the reasoning loop, the tools that give it hands, and the reasons agents fail in practice.',
+    deckLabel: 'Introduction to Agentic AI: workshop slides',
     photos: {
       'group-photo': { caption: 'Everyone who showed up', alt: 'Group photo of all workshop attendees in front of the Hermes Agent slide at the end of the session' },
       setup: { caption: 'Setting up before the room filled', alt: 'Oussama preparing the workshop at a desk with a laptop, keyboard and mouse before attendees arrive' },

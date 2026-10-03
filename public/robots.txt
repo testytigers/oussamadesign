@@ -7,7 +7,7 @@ User-agent: *
 Allow: /
 
 # ---------------------------------------------------------------
-# Answer engines — these fetch a page to cite it in a generated
+# Answer engines: these fetch a page to cite it in a generated
 # answer. Allowing them is what makes this site quotable in
 # ChatGPT Search, Perplexity, Claude and Google AI Overviews.
 # ---------------------------------------------------------------
@@ -39,7 +39,7 @@ User-agent: Amazonbot
 Allow: /
 
 # ---------------------------------------------------------------
-# Training crawlers — these harvest content to train models rather
+# Training crawlers: these harvest content to train models rather
 # than to cite it. Kept open so the work is represented in future
 # models; flip these five to `Disallow: /` to opt out of training
 # without losing any of the citation traffic above.

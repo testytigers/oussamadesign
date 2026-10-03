@@ -4,36 +4,36 @@ export const caseStudyEn = {
     'How collaborative scheduling cut candidate dropout from 40% to 12% and reduced scheduling time from 3 days to 15 minutes.',
   eyebrow: 'Case study',
   title: 'Centralizing the hiring process through collaborative scheduling',
-  lede: 'UX Designer at Wiggli — scheduling efficiency, team coordination, and tool consolidation.',
+  lede: 'UX Designer at Wiggli: scheduling efficiency, team coordination, and tool consolidation.',
   chips: ['Dropout 40% → 12%', '3 days → 15 min', '50+ active recruiters'],
 
   figures: {
     calView:
       'Wiggli collaborative scheduling calendar interface showing weekly view with interview events, Collaborative Groups panel, and team availability across multiple recruiters',
     journeyMap:
-      'Service blueprint mapping the 6-stage hiring journey — Initiate, Check Availability, Align Schedules, Propose Interview, Await Response, Confirm Interview — with actions, feelings, pain points and opportunities per stage',
+      'Service blueprint mapping the 6-stage hiring journey (Initiate, Check Availability, Align Schedules, Propose Interview, Await Response, Confirm Interview), with actions, feelings, pain points and opportunities per stage',
     problem:
       'Diagram of multi-party interview scheduling: a proposed 12:00-13:00 slot is rejected by the candidate, two interviewers each list separate availability, and the hiring manager has to hunt for the single overlapping slot, 13:00-14:00, before confirming it back to the candidate after a delay',
     oldExperience:
-      'Screen recording of the legacy Wiggli interview scheduling UI, showing the limitation of proposing only a single time slot — the root cause of 40% candidate dropout',
+      'Screen recording of the legacy Wiggli interview scheduling UI, showing the limitation of proposing only a single time slot, the root cause of 40% candidate dropout',
     oldExperienceCaption:
       'The old design only allowed proposing a single time slot, which led to communication issues and increased the rescheduling rate.',
     userFlow:
       'End-to-end user flow diagram for the redesigned Wiggli scheduling system covering Interview creation, Event setup, New Collaborative Group, Join Group, and Calendar Sync decision trees',
     collaborativeGroups:
-      'Wiggli Collaborative Groups feature UI — showing the Join Group permission modal alongside the shared calendar view where all team members’ availability is visible in a unified weekly layout',
+      'Wiggli Collaborative Groups feature UI, showing the Join Group permission modal alongside the shared calendar view where all team members’ availability is visible in a unified weekly layout',
     findBest:
       'Multi-timezone availability intersection diagram showing how the Find Best Times engine identifies 1.8 hours of shared open slots within a 4-hour common work window across Interviewer in NYC (GMT-4), Interviewer in London (GMT+0), and Candidate in Cairo (GMT+2)',
     calendarViews:
-      'Three Wiggli calendar layout variants side by side — Daily view for hour-by-hour scheduling, Weekly view for mid-term planning, and Monthly view for high-level hiring volume overview',
+      'Three Wiggli calendar layout variants side by side: Daily view for hour-by-hour scheduling, Weekly view for mid-term planning, and Monthly view for high-level hiring volume overview',
     calendarSettings:
       'Wiggli Calendar Settings screen showing Google and Outlook sync configuration, Collaborative Groups management panel, and granular member permission controls (See Event Names, See Only Free/Busy)',
     schedule:
-      'Wiggli Schedule Availability feature — Quick Add dropdown showing Event, Interview and Availability options, allowing recruiters to pre-mark free interview slots during busy hiring seasons',
+      'Wiggli Schedule Availability feature: Quick Add dropdown showing Event, Interview and Availability options, allowing recruiters to pre-mark free interview slots during busy hiring seasons',
   },
 
   discovery: {
-    label: '01 — Discovery',
+    label: '01 · Discovery',
     heading: 'Identifying fragmented communication causing a 40% candidate dropout rate',
     p1: 'In professional recruitment, speed is the only competitive advantage. At Gentis/Wiggli, we identified a critical failure in our production line: 40% of candidates were dropping out during the scheduling phase.',
     p2: 'This wasn’t just a "UX friction" issue; it was a massive financial leak. Every abandoned candidate represented thousands of dollars in wasted sourcing spend (CAC) and lost potential revenue. The process was manual, fragmented, and prone to human error. A recruiter would spend weeks sourcing a high-level "unicorn" candidate, only to lose them during a 3-day "email ping-pong" session.',
@@ -54,7 +54,7 @@ export const caseStudyEn = {
   },
 
   solution: {
-    label: '02 — Solution',
+    label: '02 · Solution',
     heading: 'Collaborative Groups &amp; smart scheduling',
     p1: 'Based on the research, I developed a new user flow and concept centred around "Collaborative Groups" to streamline the scheduling process.',
     groupsHeading: 'Collaborative Groups',
@@ -65,7 +65,7 @@ export const caseStudyEn = {
       '<strong>Normalization:</strong> Syncs disparate Google/Outlook data into a unified UTC 15-minute grid.',
       '<strong>Privacy-first constraints:</strong> Consumes "Busy" blocks only, respecting global working hours and mandatory buffers.',
       '<strong>Multi-user intersection:</strong> Overlays all participant calendars to identify the "Golden Window" of shared availability.',
-      '<strong>Smart filtering:</strong> Automatically discards "time fragments" — gaps technically free but too short for the required interview duration.',
+      '<strong>Smart filtering:</strong> Automatically discards "time fragments": gaps technically free but too short for the required interview duration.',
     ],
     archHeading: 'Flexible calendar architecture',
     archP: 'I designed three distinct views to cater to different planning needs:',
@@ -81,7 +81,7 @@ export const caseStudyEn = {
   },
 
   adoption: {
-    label: '03 — Adoption',
+    label: '03 · Adoption',
     heading: 'Adoption &amp; change management',
     items: [
       '<strong>Contextual onboarding:</strong> Designed a just-in-time onboarding guide with contextual tooltips to flatten the learning curve without forced manuals.',
@@ -90,7 +90,7 @@ export const caseStudyEn = {
   },
 
   results: {
-    label: '04 — Results',
+    label: '04 · Results',
     heading: 'Results &amp; iteration',
     p1: 'The implementation was tracked via Wiggli’s reporting dashboard for 50+ active recruiters, proving that structural UX changes drive direct business ROI.',
     tableHeaders: ['Metric', 'Before', 'After', 'Impact'],
@@ -111,8 +111,8 @@ export const caseStudyEn = {
   },
 
   conclusion: {
-    label: '05 — Conclusion',
+    label: '05 · Conclusion',
     heading: 'What it added up to',
-    p1: 'Working on Wiggli allowed me to build a tight feedback loop with the end users at Gentis. By transforming a chaotic journey involving five different communication platforms into a centralized "Collaborative Group" experience, we didn’t just redesign a calendar — we engineered a more efficient way for the organization to grow.',
+    p1: 'Working on Wiggli allowed me to build a tight feedback loop with the end users at Gentis. By transforming a chaotic journey involving five different communication platforms into a centralized "Collaborative Group" experience, we didn’t just redesign a calendar; we engineered a more efficient way for the organization to grow.',
   },
 } as const;

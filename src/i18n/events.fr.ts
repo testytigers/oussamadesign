@@ -12,8 +12,8 @@ export const eventsFr = {
     /* Home-page teaser, kept under 120 characters so the two cards stay
        the same height in the grid. */
     shortDescription:
-      "Le fonctionnement réel d'un LLM — choisir un modèle, le moteur qui l'exécute, la quantification et le contexte.",
-    deckLabel: "Dans le crâne de l'IA — slides de l'atelier",
+      "Le fonctionnement réel d'un LLM : choisir un modèle, le moteur qui l'exécute, la quantification et le contexte.",
+    deckLabel: "Dans le crâne de l'IA : slides de l'atelier",
     photos: {
       'opening-the-room': {
         caption: 'Ouverture de la session',
@@ -66,8 +66,8 @@ export const eventsFr = {
     /* Home-page teaser, kept under 120 characters so the two cards stay
        the same height in the grid. */
     shortDescription:
-      "Du LLM à l'agent — la boucle de raisonnement, les outils qui lui donnent des mains, et pourquoi ils échouent.",
-    deckLabel: "Introduction à l'IA agentique — slides de l'atelier",
+      "Du LLM à l'agent : la boucle de raisonnement, les outils qui lui donnent des mains, et pourquoi ils échouent.",
+    deckLabel: "Introduction à l'IA agentique : slides de l'atelier",
     photos: {
       'group-photo': { caption: 'Toute la salle', alt: "Photo de groupe des participants devant la slide Hermes Agent, à la fin de la session" },
       setup: { caption: 'Installation avant l’arrivée', alt: "Oussama prépare l'atelier à un bureau, portable, clavier et souris, avant l'arrivée des participants" },

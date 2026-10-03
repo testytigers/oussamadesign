@@ -8,6 +8,7 @@ import { defaultLang, localizePath, t, type Lang } from '../../i18n';
 import { homeGraph } from '../../seo/schema';
 import { events } from '../../data/events';
 import { caseStudies } from '../../data/case-studies';
+import { book } from '../../data/book';
 
 interface Props { lang?: Lang }
 const { lang = defaultLang } = Astro.props;
@@ -42,12 +43,20 @@ const brands = [
   lang={lang}
   path={PATH}
   ogType="profile"
-  schema={homeGraph({ lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` })}>
+  schema={homeGraph({ lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` }, book)}>
 
   <Header lang={lang} path={PATH} />
 
   <PageHeader title={d.home.heroTitle} intro>
-    <p class="page-lede" set:html={d.home.heroLede} />
+    <p slot="lede" class="page-lede">{d.home.heroLede}</p>
+    <dl class="hero-metrics">
+      {d.home.heroMetrics.map((m) => (
+        <div>
+          <dt>{m.label}</dt>
+          <dd>{m.value}</dd>
+        </div>
+      ))}
+    </dl>
     <div class="logo-marquee">
       <div class="logo-track">
         <ul class="logo-group">
@@ -135,6 +144,34 @@ const brands = [
             </a>
           );
         })}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOK -->
+  <section id="book" class="home-book">
+    <div class="folio-container">
+      <header class="section-head">
+        <h2>{d.book.heading}</h2>
+      </header>
+
+      <div class="book-card">
+        <a class="book-cover" href={book.getUrl} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+          <span class="book-3d">
+            <img src={book.cover.src} alt="" width={book.cover.width} height={book.cover.height} loading="lazy" decoding="async" />
+          </span>
+        </a>
+
+        <div class="book-body">
+          <p class="micro-label">{d.book.eyebrow}</p>
+          <h3>{book.title}</h3>
+          <p class="book-desc">{d.book.description}</p>
+          <a class="btn btn-primary book-cta" href={book.getUrl} target="_blank" rel="noopener">
+            <span class="btn-label">{d.book.cta}</span>
+            <span class="sr-only">{d.book.newTab}</span>
+            <span class="arrow"><Icon name="arrow-right" /></span>
+          </a>
+        </div>
       </div>
     </div>
   </section>

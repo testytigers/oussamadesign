@@ -26,7 +26,19 @@ const hasMedia = Astro.slots.has('media');
           </a>
         )}
         {eyebrow && <p class="micro-label">{eyebrow}</p>}
-        <h1>{title}</h1>
+        {intro ? (
+          /* Home intro: photo beside the title and pitch, in one outlined card.
+             A real <img> with alt text, so the photo is indexable. */
+          <div class="intro-card">
+            <img class="intro-avatar" src="/images/avatar.webp" alt="Oussama Bougnouch" width="112" height="112" fetchpriority="high" decoding="async" />
+            <div class="intro-card-text">
+              <h1>{title}</h1>
+              <slot name="lede" />
+            </div>
+          </div>
+        ) : (
+          <h1>{title}</h1>
+        )}
         <slot />
       </div>
 

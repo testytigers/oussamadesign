@@ -49,6 +49,7 @@ if (!reduce) {
       '.deck',
       '.mosaic-item',
       '.door-stage',
+      '.book-card',
     ].join(','),
   );
 

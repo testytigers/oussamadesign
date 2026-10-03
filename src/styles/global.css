@@ -685,6 +685,44 @@ section {
   pointer-events: none;
 }
 
+/* Home intro: two banks of soft cloud drifting along the bottom edge. On the
+   text block's ::after (::before is the scrim), so they paint above the dark
+   gradient, which would otherwise swallow them, and below the type. Each
+   layer travels a whole number of its own tile widths per cycle, so the loop
+   never jumps; the farther bank moves at a third of the nearer one's speed. */
+.page-header.is-intro .page-header-text::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  height: 300px;
+  background-image: url('/images/intro-cloud2.webp'), url('/images/intro-cloud1.webp');
+  background-repeat: repeat-x;
+  background-size: 2000px auto, 1600px auto;
+  background-position: 0 115%, 0 100%;
+  /* Measured: at 0.3 the brightest cloud behind the intro's gradient link
+     still leaves it above 4.5:1 at its darkest stop, at every point of the
+     drift cycle. Raise this and re-check. */
+  opacity: 0.3;
+  /* Soft top and bottom edges: the band dissolves into the scene above and
+     into the black section below rather than ending at a line. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 70%, transparent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-header.is-intro .page-header-text::after {
+    animation: clouds-drift 140s linear infinite;
+  }
+}
+
+@keyframes clouds-drift {
+  to { background-position: -4000px 115%, -1600px 100%; }
+}
+
 /* An optional image slot, standing on the text block among the clouds. */
 .page-header-media {
   order: -1;
@@ -710,23 +748,36 @@ section {
   margin: 0;
 }
 
-/* Home: the old intro's name row — round avatar beside the name. */
-.page-header.is-intro h1 {
+/* Home intro card: photo left, title and pitch right. Transparent so the
+   engraving and scrim read through it; a faint hairline does the framing. */
+.intro-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  max-width: none;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  margin-bottom: 24px;
+  gap: 32px;
+  padding: 30px 34px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  background: transparent;
 }
 
-.page-header.is-intro h1::before {
-  content: '';
+.intro-avatar {
   flex: none;
-  width: 60px;
-  height: 60px;
+  width: 112px;
+  height: 112px;
+  margin: 0;
   border-radius: 50%;
-  background: #111 url('/images/avatar.webp') center / cover no-repeat;
+  object-fit: cover;
+  background: #111;
+}
+
+.intro-card-text {
+  min-width: 0;
+}
+
+.page-header.is-intro h1 {
+  max-width: none;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  margin: 0 0 12px;
 }
 
 .page-header .micro-label {
@@ -747,6 +798,53 @@ section {
   font-size: 1.22rem;
   max-width: none;
   margin: 0;
+}
+
+/* Proof points under the intro: the figure large in the gradient, its
+   meaning under it. A <dl> so each number stays paired with what it measures
+   for screen readers; dd is shown first visually via column-reverse. */
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin: 34px 0 0;
+}
+
+.hero-metrics > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-left: 18px;
+  border-left: 1px solid var(--border-strong);
+}
+
+.hero-metrics dd {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-metrics dt {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 155%;
+}
+
+@media (max-width: 767px) {
+  .hero-metrics {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin-top: 28px;
+  }
 }
 
 /* Highlighted phrases carry the old gradient. They are links, so the gradient
@@ -832,9 +930,25 @@ section {
     max-height: 250px;
   }
 
-  .page-header.is-intro h1::before {
-    width: 48px;
-    height: 48px;
+  .intro-card {
+    align-items: flex-start;
+    gap: 18px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .intro-avatar {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Narrow phones: photo above the text, so the title gets the card's full
+   width instead of wrapping to three lines beside it. */
+@media (max-width: 480px) {
+  .intro-card {
+    flex-direction: column;
+    gap: 16px;
   }
 
   .page-header.is-intro .page-lede {
@@ -1278,6 +1392,156 @@ a.media-row:hover .arrow {
   border-bottom: none;
 }
 
+/* ============ HOME BOOK ============ */
+/* One folio-card: a small 3D book on the left, a short pitch on the right. */
+.book-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 64px;
+  align-items: center;
+  padding: 48px 56px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+/* A faint teal glow behind the book — the only ornament in the card. */
+.book-card::before {
+  content: '';
+  position: absolute;
+  left: -6%;
+  top: -30%;
+  width: 46%;
+  height: 160%;
+  background: radial-gradient(closest-side, rgba(108, 171, 161, 0.16), transparent);
+  pointer-events: none;
+}
+
+/* The 3D book: front cover, a block of page edges down the right side, and a
+   back cover, all in one preserve-3d box. --bd is the thickness — 37 pages
+   is a slim book. Turns to face the reader on hover. */
+.book-cover {
+  --bw: 180px;
+  --bh: 270px;
+  --bd: 17px;
+  display: block;
+  width: var(--bw);
+  height: var(--bh);
+  margin: 0 12px 0 4px;
+  perspective: 900px;
+}
+
+.book-cover:hover { opacity: 1; }
+
+.book-3d {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(-32deg);
+  transition: transform 0.8s var(--ease-out, ease);
+}
+
+/* The whole card is the trigger, not just the cover: the book turns to face
+   the reader, lifts a little, and its shadow spreads as it comes forward. */
+.book-card:hover .book-3d,
+.book-card:focus-within .book-3d {
+  transform: rotateY(-6deg) translateY(-8px) scale(1.03);
+}
+
+.book-3d::after {
+  transition: box-shadow 0.8s var(--ease-out, ease);
+}
+
+.book-card:hover .book-3d::after,
+.book-card:focus-within .book-3d::after {
+  box-shadow: -6px 30px 50px 8px rgba(0, 0, 0, 0.8);
+}
+
+.book-3d img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  border-radius: 2px 4px 4px 2px;
+  transform: translateZ(calc(var(--bd) / 2));
+  box-shadow: 6px 6px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Page edges. */
+.book-3d::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: var(--bd);
+  height: calc(var(--bh) - 6px);
+  transform: translateX(calc(var(--bw) - var(--bd) / 2 - 3px)) rotateY(90deg);
+  background: repeating-linear-gradient(90deg, #f4f1ea 0 1px, #d9d5cc 1px 2px);
+}
+
+/* Back cover, and the shadow the book casts. */
+.book-3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateZ(calc(var(--bd) / -2));
+  background: #141414;
+  border-radius: 2px 4px 4px 2px;
+  box-shadow: -14px 18px 40px 6px rgba(0, 0, 0, 0.75);
+}
+
+.book-body {
+  position: relative;
+  max-width: 62ch;
+}
+
+.book-body h3 {
+  font-size: clamp(1.9rem, 3.6vw, 2.5rem);
+  line-height: 110%;
+  margin: 0;
+}
+
+.book-desc {
+  margin: 16px 0 0;
+  color: var(--text-muted);
+  font-size: 1.02rem;
+}
+
+.book-cta {
+  margin-top: 26px;
+}
+
+/* The minimal arrow every other call to action uses, in the gradient's last
+   stop so it reads as the end of the label rather than a separate white
+   glyph; it slides right when the card is hovered. */
+.book-cta .arrow {
+  color: #D59777;
+}
+
+.book-card:hover .book-cta .arrow,
+.book-cta:focus-visible .arrow {
+  transform: translateX(12px);
+}
+
+@media (max-width: 767px) {
+  .book-card {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 36px;
+    padding: 40px 22px 28px;
+  }
+
+  .book-body {
+    justify-self: stretch;
+  }
+}
+
 /* ============ HOME EVENT GRID ============ */
 /* Two cards side by side on the home page. `minmax(0, 1fr)` rather than a bare
    `1fr`: the tracks hold images, and a bare 1fr resolves to the content's
@@ -1452,10 +1716,31 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  min-height: min(100vh, 880px);
-  padding: 140px 20px 0;
+  /* Sized by its content: the title sits ~110px under the footer's top edge
+     on desktop (half the old full-height scene's gap), 55px on phones. */
+  padding: 110px 20px 0;
   text-align: center;
   overflow: hidden;
+}
+
+/* Pure black at the top edge, the same black as the section above, easing to
+   clear by mid-scene, so the engraving rises out of the page instead of
+   starting at a seam. A light overall dim keeps the door the brightest thing. */
+.door-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      #000 0%,
+      rgba(0, 0, 0, 0.92) 12%,
+      rgba(0, 0, 0, 0.55) 34%,
+      rgba(0, 0, 0, 0) 62%
+    ),
+    rgba(0, 0, 0, 0.18);
+  pointer-events: none;
 }
 
 .door-scene-art {
@@ -1469,9 +1754,39 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
   pointer-events: none;
 }
 
+/* The intro's drifting clouds, echoed at the top of the footer so the page
+   opens and closes in the same weather. z-index 1: above the black top
+   gradient (::after, z 0), which would otherwise swallow them; the stage
+   with the title and door sits above at z 2. Same layers, opacity and
+   seamless loop as the intro (see .page-header.is-intro ...::after). */
+.door-scene::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 340px;
+  background-image: url('/images/intro-cloud2.webp'), url('/images/intro-cloud1.webp');
+  background-repeat: repeat-x;
+  background-size: 2000px auto, 1600px auto;
+  background-position: 0 115%, 0 100%;
+  opacity: 0.3;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 65%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 65%, transparent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .door-scene::before {
+    /* Offset into the cycle so the two bands never show the same clouds. */
+    animation: clouds-drift 140s linear -60s infinite;
+  }
+}
+
 .door-stage {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1591,7 +1906,7 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
 }
 
 @media (max-width: 767px) {
-  .door-scene { padding-top: 110px; min-height: 0; }
+  .door-scene { padding-top: 55px; }
   .door-title { font-size: 2.6rem; margin-bottom: 22px; }
   .door { width: 320px; height: 380px; border-width: 24px; border-bottom: 0; }
   .door-face { border-radius: 176px 176px 0 0; }
@@ -1781,3 +2096,15 @@ a.event-card:hover::before {
   .reveal { opacity: 1; }
 }
 
+
+/* Visually hidden, still read by screen readers and crawlers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

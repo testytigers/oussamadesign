@@ -32,7 +32,7 @@ export const GET: APIRoute = () => {
 
   const body = `# Oussama Bougnouch
 
-> Senior UX Designer and AI system builder based in Rabat, Morocco. 13+ years
+> Senior UX Designer and AI system builder based in Rabat, Morocco. 15+ years
 > designing enterprise products, most recently combining product UX with
 > hands-on work on local LLMs and agentic AI systems.
 
@@ -41,7 +41,7 @@ export const GET: APIRoute = () => {
 - Full name: Oussama Bougnouch
 - Role: Senior UX Designer & AI System Builder
 - Location: Rabat, Morocco
-- Experience: 13+ years
+- Experience: 15+ years
 - Languages: English, French
 - Site languages: ${locales.map((l) => l.toUpperCase()).join(', ')} (English at the root, French under /fr/)
 - Contact: musamathemes@gmail.com, +212 698 996 201, and LinkedIn https://www.linkedin.com/in/oussamabougnouch/
@@ -65,7 +65,7 @@ France Judo, Fédération Française de Football, Fédération Française d'Athl
 ## Areas of expertise
 
 UX strategy and research, enterprise and B2B SaaS product design, design systems,
-information architecture, journey mapping, A/B testing, and applied AI — agentic
+information architecture, journey mapping, A/B testing, and applied AI: agentic
 AI systems, local LLM deployment, model quantization and context management.
 
 ## Pages
@@ -78,7 +78,7 @@ ${eventLines.join('\n')}
 
 ## French
 
-Every page above has a French counterpart under /fr/ — for example
+Every page above has a French counterpart under /fr/, for example
 ${new URL('/fr/', SITE_URL).href} and ${new URL('/fr/events/', SITE_URL).href}.
 The French copy is adapted for a French-speaking audience rather than translated
 literally. Use the hreflang annotations in /sitemap-index.xml to pair them.

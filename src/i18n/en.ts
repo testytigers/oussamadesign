@@ -43,10 +43,15 @@ export const en = {
   home: {
     title: 'Oussama Bougnouch | Sr UX Designer, AI System Builder',
     description:
-      'Sr UX Designer & AI System Builder with 13+ years. Reduced candidate dropout 70%, scaled marketplace 9x. CHANEL, AT&T, Fnac, Carrefour.',
-    heroTitle: "Hi, I'm Oussama!",
+      'Sr UX Designer & AI System Builder with 15+ years. Reduced candidate dropout 70%, scaled marketplace 9x. CHANEL, AT&T, Fnac, Carrefour.',
+    heroTitle: 'Principal UX Designer & Product Architect',
     heroLede:
-      'I\'m a Sr UX Designer, AI System Builder specializing in user-centered design and data-driven growth — mapping user journeys, running A/B tests, and shipping interfaces that move <a href="#work">business goals</a>, not just pixels.',
+      'I bridge business strategy, cross-functional leadership, and AI-native design to turn complex product roadmaps into high-growth user experiences.',
+    heroMetrics: [
+      { value: '15+', label: 'Years in B2B SaaS, marketplaces & enterprise products' },
+      { value: '9x', label: 'Marketplace growth at Sobrus through procurement optimization' },
+      { value: '40% → 12%', label: 'Drop-off cut at Gentis by re-engineering candidate journeys' },
+    ],
     workHead: 'Case studies',
     workLede: 'Long-form breakdowns of the problems I was handed and what shipped.',
     journalHead: 'UX journal',
@@ -68,6 +73,15 @@ export const en = {
     ],
   },
 
+  book: {
+    heading: 'My new book',
+    eyebrow: 'Free PDF',
+    description:
+      "Everything designing with AI has taught me, in one short book. Eleven chapters on what AI really does under the hood, where it breaks, and how designers can put it to work, drawn from the products I've shipped with it, not from the hype. About an hour to read.",
+    cta: 'Send me the book',
+    newTab: '(opens uxintoax.com in a new tab)',
+    coverAlt: 'Cover of Signal vs Noise, the free AI book for UX designers by Oussama Bougnouch',
+  },
   events: {
     title: 'Events | Oussama Bougnouch',
     description: 'Upcoming and past workshops and events on AI, UX, and technology.',

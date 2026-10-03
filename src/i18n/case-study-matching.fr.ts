@@ -8,7 +8,7 @@ const figures: Record<string, CaseStudyFigure> = {
   },
   pipelineBoard: {
     src: '/images/work/matching-pipeline.png',
-    alt: "Le tableau de pipeline Wiggli pour une offre de Senior Accountant IFRS, avec les colonnes Candidature, Revue interne, Entretien et Contrat. Chaque fiche candidat porte son score de correspondance — 81 %, 52 %, 32 % — et une fiche est en cours de déplacement entre deux étapes",
+    alt: "Le tableau de pipeline Wiggli pour une offre de Senior Accountant IFRS, avec les colonnes Candidature, Revue interne, Entretien et Contrat. Chaque fiche candidat porte son score de correspondance (81 %, 52 %, 32 %) et une fiche est en cours de déplacement entre deux étapes",
     caption: "Les scores vivent sur les fiches, dans le pipeline que les recruteurs utilisent déjà. Pas de nouvel écran, pas d'outil à part.",
   },
   candidateCard: {
@@ -23,7 +23,7 @@ const figures: Record<string, CaseStudyFigure> = {
       width: 982,
       height: 720,
     },
-    alt: "Capture vidéo : sur une offre de développeur Java, le recruteur ouvre Qualified Matches et Wiggli renvoie une liste Search candidates filtrée — Langues : anglais 5/5 et Compétences : Agile Methodologies 3/5, douze résultats — avec une case à cocher sur chaque ligne pour le traitement groupé",
+    alt: "Capture vidéo : sur une offre de développeur Java, le recruteur ouvre Qualified Matches et Wiggli renvoie une liste Search candidates filtrée : Langues : anglais 5/5 et Compétences : Agile Methodologies 3/5, douze résultats, avec une case à cocher sur chaque ligne pour le traitement groupé",
     caption: "Le sourcing depuis l'offre : un clic renvoie le vivier filtré pour l'annonce, chaque ligne sélectionnable pour un traitement groupé.",
   },
 };
@@ -57,7 +57,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '01 — Le problème',
+    label: '01 · Le problème',
     heading: 'Deux cents profils, non triés, et une semaine pour les lire',
     blocks: [
       { t: 'h3', text: 'Ce que faisaient les recruteurs' },
@@ -109,7 +109,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '02 — Recherche',
+    label: '02 · Recherche',
     heading: "Demander à 2 000 recruteurs comment ils jugent vraiment un profil",
     blocks: [
       {
@@ -141,7 +141,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '03 — Partis pris',
+    label: '03 · Partis pris',
     heading: "Quatre décisions ont fait l'essentiel du travail",
     blocks: [
       {
@@ -164,7 +164,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '04 — Le modèle de scoring',
+    label: '04 · Le modèle de scoring',
     heading: 'Six piliers, pondérations à 100',
     blocks: [
       { t: 'h3', text: "D'où viennent les chiffres d'entrée" },
@@ -267,7 +267,7 @@ const sections: CaseStudySection[] = [
         rows: [
           [
             'Compétences (40 %)',
-            "Indispensables : journey mapping 0,8 — enquêtes quanti 0,6 — enquêtes quali 0,8 — enquête contextuelle 0,0. Autres : persona 0,8 — design system 0,6 — Figma 0,8 — UX writing 1,0 — accessibilité 0,0",
+            "Indispensables : journey mapping 0,8 ; enquêtes quanti 0,6 ; enquêtes quali 0,8 ; enquête contextuelle 0,0. Autres : persona 0,8 ; design system 0,6 ; Figma 0,8 ; UX writing 1,0 ; accessibilité 0,0",
             '23,08 %',
           ],
           ['Fonctions (25 %)', 'Principale : product design 0,90. Secondaire : systèmes front-end 0,60', '20,25 %'],
@@ -286,7 +286,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: "05 — L'interface",
+    label: "05 · L'interface",
     heading: "Le score, c'est la moitié du produit. L'autre moitié, c'est d'y croire",
     blocks: [
       {
@@ -333,7 +333,7 @@ const sections: CaseStudySection[] = [
       { t: 'h3', text: 'Ce que la fiche ne fait pas' },
       {
         t: 'p',
-        html: "Pas de pastilles de couleur, pas de badge « recommandé », pas de rejet automatique sur le score. Le chiffre se tient à côté du nom, du titre et de l'ancienneté sans les dominer. Cette retenue est délibérée. Un outil qui a l'air de décider pousse les recruteurs soit à lui faire trop confiance, soit à le rejeter en bloc&nbsp;— et nous avions déjà vu ce que coûte le rejet.",
+        html: "Pas de pastilles de couleur, pas de badge « recommandé », pas de rejet automatique sur le score. Le chiffre se tient à côté du nom, du titre et de l'ancienneté sans les dominer. Cette retenue est délibérée. Un outil qui a l'air de décider pousse les recruteurs soit à lui faire trop confiance, soit à le rejeter en bloc, et nous avions déjà vu ce que coûte le rejet.",
       },
       { t: 'figure', key: 'candidateCard' },
 
@@ -369,7 +369,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '06 — Résultats',
+    label: '06 · Résultats',
     heading: "Le gain croît avec la profondeur d'usage",
     blocks: [
       { t: 'h3', text: 'Temps de présélection, parcours entrant' },
@@ -424,7 +424,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '07 — Limites à nommer',
+    label: '07 · Limites à nommer',
     heading: 'Ce que ce système ne fait pas',
     blocks: [
       {
@@ -467,7 +467,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '08 — La suite',
+    label: '08 · La suite',
     heading: 'Où cela va',
     blocks: [
       {
@@ -491,7 +491,7 @@ export const matchingFr = {
     "Un score de correspondance à six piliers, entièrement explicable, pour l'ATS Wiggli. Le temps de présélection a baissé de 65 % chez les utilisateurs intensifs et de 40 % chez les réguliers.",
   eyebrow: 'Étude de cas',
   title: 'Classer 200 candidatures sans perdre la confiance du recruteur',
-  lede: "Principal Product Architect et UX Lead chez Wiggli — reprendre un score de correspondance que les clients avaient déjà rejeté, et rendre chaque chiffre qu'il produit inspectable.",
+  lede: "Principal Product Architect et UX Lead chez Wiggli, pour reprendre un score de correspondance que les clients avaient déjà rejeté, et rendre chaque chiffre qu'il produit inspectable.",
   chips: ['Présélection −65 % (intensifs)', '−40 % (réguliers)', "243 réponses à l'enquête"],
   meta: [
     { label: 'Rôle', value: 'Principal Product Architect et UX Lead' },

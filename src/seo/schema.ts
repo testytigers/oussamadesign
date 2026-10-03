@@ -41,14 +41,14 @@ const profile = {
   en: {
     jobTitle: 'Senior UX Designer & AI System Builder',
     description:
-      'Senior UX Designer and AI system builder based in Rabat, Morocco, with 13+ years designing enterprise products. Cut candidate dropout by 70% and scaled a B2B marketplace 9x at Wiggli; has worked with CHANEL, AT&T, Fnac and Carrefour.',
+      'Senior UX Designer and AI system builder based in Rabat, Morocco, with 15+ years designing enterprise products. Cut candidate dropout by 70% and scaled a B2B marketplace 9x at Wiggli; has worked with CHANEL, AT&T, Fnac and Carrefour.',
     occupation: 'UX Designer',
     country: 'Morocco',
   },
   fr: {
     jobTitle: 'UX Designer senior & concepteur de systèmes IA',
     description:
-      "UX Designer senior et concepteur de systèmes IA basé à Rabat, au Maroc, avec plus de 13 ans d'expérience en produits d'entreprise. A réduit l'abandon des candidats de 70 % et fait croître une marketplace B2B x9 chez Wiggli ; a travaillé avec CHANEL, AT&T, Fnac et Carrefour.",
+      "UX Designer senior et concepteur de systèmes IA basé à Rabat, au Maroc, avec plus de 15 ans d'expérience en produits d'entreprise. A réduit l'abandon des candidats de 70 % et fait croître une marketplace B2B x9 chez Wiggli ; a travaillé avec CHANEL, AT&T, Fnac et Carrefour.",
     occupation: 'UX Designer',
     country: 'Maroc',
   },
@@ -209,13 +209,33 @@ function webPage(base: PageBase, type: string, extra: Record<string, unknown> = 
 }
 
 /** Home — a ProfilePage, the type answer engines use for "who is X". */
-export function homeGraph(base: PageBase) {
+export function homeGraph(
+  base: PageBase,
+  book?: { title: string; url: string; cover: { src: string }; pages: number; inLanguage: string }
+) {
+  /* The book as a free e-book by the same Person — authorship an answer engine
+     can attribute, pointing at the page where it is actually distributed. */
+  const bookNode = book
+    ? {
+        '@type': 'Book',
+        '@id': `${book.url}#book`,
+        name: book.title,
+        url: book.url,
+        image: abs(book.cover.src),
+        author: { '@id': PERSON_ID },
+        bookFormat: 'https://schema.org/EBook',
+        numberOfPages: book.pages,
+        inLanguage: book.inLanguage,
+        isAccessibleForFree: true,
+      }
+    : null;
   return graph([
     ...common(base.lang),
     ...clientNodes(),
+    ...(bookNode ? [bookNode] : []),
     webPage(base, 'ProfilePage', {
       mainEntity: { '@id': PERSON_ID },
-      mentions: clientRefs(),
+      mentions: [...clientRefs(), ...(bookNode ? [{ '@id': bookNode['@id'] }] : [])],
     }),
   ]);
 }
@@ -294,7 +314,7 @@ export function eventGraph(
         author: { '@id': PERSON_ID },
         hasPart: {
           '@type': 'PresentationDigitalDocument',
-          name: `${base.title} — slides`,
+          name: `${base.title}: slides`,
           numberOfPages: opts.slideCount,
         },
       };

@@ -46,10 +46,15 @@ export const fr = {
   home: {
     title: 'Oussama Bougnouch | UX Designer Senior & Concepteur de systèmes IA',
     description:
-      "UX Designer Senior & concepteur de systèmes IA, 13 ans d'expérience. Abandon des candidats réduit de 70 %, marketplace multipliée par 9. CHANEL, AT&T, Fnac, Carrefour.",
-    heroTitle: "Bonjour, moi c'est Oussama !",
+      "UX Designer Senior & concepteur de systèmes IA, 15 ans d'expérience. Abandon des candidats réduit de 70 %, marketplace multipliée par 9. CHANEL, AT&T, Fnac, Carrefour.",
+    heroTitle: 'Principal UX Designer & Product Architect',
     heroLede:
-      "UX Designer Senior et concepteur de systèmes IA, je conçois des produits centrés utilisateur et pilotés par la donnée : cartographie des parcours, tests A/B et interfaces qui font bouger les <a href=\"#work\">indicateurs business</a>, pas seulement les pixels.",
+      "Je relie stratégie business, leadership transverse et design natif IA pour transformer des roadmaps produit complexes en expériences utilisateur à forte croissance.",
+    heroMetrics: [
+      { value: '15+', label: "Ans en SaaS B2B, marketplaces et produits d'entreprise" },
+      { value: '9x', label: 'Croissance de la marketplace chez Sobrus grâce à l’optimisation des achats' },
+      { value: '40 % → 12 %', label: "Abandon réduit chez Gentis en repensant le parcours candidat" },
+    ],
     workHead: 'Études de cas',
     workLede: "Le détail des problèmes qu'on m'a confiés, et de ce qui a été livré.",
     journalHead: 'Journal UX',
@@ -71,6 +76,15 @@ export const fr = {
     ],
   },
 
+  book: {
+    heading: 'Mon nouveau livre',
+    eyebrow: 'PDF gratuit',
+    description:
+      "Tout ce que concevoir avec l’IA m’a appris, en un court livre. Onze chapitres sur ce que l’IA fait vraiment sous le capot, là où elle échoue, et comment les designers peuvent s’en servir, tirés des produits que j’ai livrés avec elle, pas du battage. Environ une heure de lecture, en anglais.",
+    cta: 'Recevoir le livre',
+    newTab: '(ouvre uxintoax.com dans un nouvel onglet)',
+    coverAlt: 'Couverture de Signal vs Noise, le livre gratuit sur l’IA pour les designers UX, par Oussama Bougnouch',
+  },
   events: {
     title: 'Événements | Oussama Bougnouch',
     description: 'Ateliers et événements, passés et à venir, sur l’IA, l’UX et la technologie.',

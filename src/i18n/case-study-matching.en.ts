@@ -10,7 +10,7 @@ const figures: Record<string, CaseStudyFigure> = {
   },
   pipelineBoard: {
     src: '/images/work/matching-pipeline.png',
-    alt: 'The Wiggli pipeline board for a Senior Accountant IFRS vacancy, with Application, Internal review, Interview and Contract columns. Every candidate card carries a match score ring — 81%, 52%, 32% — and one card is mid-drag between two stages',
+    alt: 'The Wiggli pipeline board for a Senior Accountant IFRS vacancy, with Application, Internal review, Interview and Contract columns. Every candidate card carries a match score ring (81%, 52%, 32%) and one card is mid-drag between two stages',
     caption: 'Scores ride on the cards, inside the pipeline recruiters already use. No new screen, no separate tool.',
   },
   candidateCard: {
@@ -25,7 +25,7 @@ const figures: Record<string, CaseStudyFigure> = {
       width: 982,
       height: 720,
     },
-    alt: 'Screen recording: on a Java developer vacancy the recruiter opens Qualified Matches, and Wiggli returns a filtered Search candidates list — Languages is English 5/5 and Skills is any of Agile Methodologies 3/5, twelve results — with a checkbox on every row for bulk processing',
+    alt: 'Screen recording: on a Java developer vacancy the recruiter opens Qualified Matches, and Wiggli returns a filtered Search candidates list: Languages is English 5/5 and Skills is any of Agile Methodologies 3/5, twelve results, with a checkbox on every row for bulk processing',
     caption: 'Sourcing from the vacancy: one click returns the pool filtered against the posting, every row selectable for bulk processing.',
   },
 };
@@ -59,7 +59,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '01 — The problem',
+    label: '01 · The problem',
     heading: 'Two hundred profiles, unsorted, and one week to read them',
     blocks: [
       { t: 'h3', text: 'What recruiters were doing' },
@@ -111,7 +111,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '02 — Research',
+    label: '02 · Research',
     heading: 'Asking 2,000 recruiters how they actually judge a profile',
     blocks: [
       {
@@ -143,7 +143,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '03 — Design decisions',
+    label: '03 · Design decisions',
     heading: 'Four choices did most of the work',
     blocks: [
       {
@@ -166,7 +166,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '04 — The scoring model',
+    label: '04 · The scoring model',
     heading: 'Six pillars, weights summing to 100',
     blocks: [
       { t: 'h3', text: 'Where the input numbers come from' },
@@ -288,7 +288,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '05 — The interface',
+    label: '05 · The interface',
     heading: 'The score is half the product. The other half is whether a recruiter believes it',
     blocks: [
       {
@@ -371,7 +371,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '06 — Results',
+    label: '06 · Results',
     heading: 'Return scales with adoption depth',
     blocks: [
       { t: 'h3', text: 'Screening time, inbound flow' },
@@ -426,7 +426,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '07 — Limits worth naming',
+    label: '07 · Limits worth naming',
     heading: 'What this system does not do',
     blocks: [
       {
@@ -469,7 +469,7 @@ const sections: CaseStudySection[] = [
   },
 
   {
-    label: '08 — What comes next',
+    label: '08 · What comes next',
     heading: 'Where this goes',
     blocks: [
       {
@@ -493,7 +493,7 @@ export const matchingEn = {
     'A six-pillar, fully explainable candidate matching score for the Wiggli ATS. Screening time fell 65% for power users and 40% for regular users.',
   eyebrow: 'Case study',
   title: "Ranking 200 applicants without losing the recruiter's trust",
-  lede: 'Principal Product Architect and UX Lead at Wiggli — rebuilding a matching score that clients had already rejected once, and making every number it produces open to inspection.',
+  lede: 'Principal Product Architect and UX Lead at Wiggli, rebuilding a matching score that clients had already rejected once, and making every number it produces open to inspection.',
   chips: ['Screening −65% power users', '−40% regular users', '243 survey responses'],
   meta: [
     { label: 'Role', value: 'Principal Product Architect and UX Lead' },
