@@ -74,29 +74,97 @@ if (!reduce) {
     io.observe(el);
   });
 
-  /* ---------- Header scroll states ----------
-     Solidifies once the page moves, tucks away on a deliberate scroll down,
-     returns on any scroll up. Never hides while its menu is open or near the
-     top of the page. */
+  /* ---------- Everything that follows the scroll position ----------
+     One handler on Lenis's tick, not one listener per effect. It reads only
+     cached geometry (measured on load and resize, never per frame, so no
+     forced layout) and writes only GPU-cheap properties: transforms and two
+     header classes, each touched only when its value actually changes. */
   const header = document.querySelector<HTMLElement>('.site-header');
   const nav = document.getElementById('nav-links');
-  let lastY = window.scrollY;
+  const coverBg = document.querySelector<HTMLElement>('.page-header-bg');
+  const cover = coverBg?.parentElement ?? null;
+  const scene = document.querySelector<HTMLElement>('.door-scene');
+  const sceneArt = scene?.querySelector<HTMLElement>('.door-scene-art') ?? null;
+  const article = document.querySelector<HTMLElement>('.cs-body')?.closest('article, main') as HTMLElement | null;
 
-  const onScroll = () => {
-    if (!header) return;
-    const y = window.scrollY;
-    header.classList.toggle('is-scrolled', y > 24);
-    const menuOpen = nav?.classList.contains('open');
-    if (!menuOpen && y > 320 && y - lastY > 6) header.classList.add('is-tucked');
-    else if (lastY - y > 6 || y <= 320) header.classList.remove('is-tucked');
-    if (Math.abs(y - lastY) > 6) lastY = y;
+  let bar: HTMLElement | null = null;
+  if (article) {
+    bar = document.createElement('div');
+    bar.className = 'reading-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+  }
+
+  // Document-space geometry, refreshed when layout can have changed.
+  const geo = { vh: 0, coverBottom: 0, sceneTop: 0, sceneH: 1, artTop: 0, artH: 1 };
+  const docTop = (el: HTMLElement) => el.getBoundingClientRect().top + window.scrollY;
+  const measure = () => {
+    geo.vh = window.innerHeight;
+    if (cover) geo.coverBottom = docTop(cover) + cover.offsetHeight;
+    if (scene) { geo.sceneTop = docTop(scene); geo.sceneH = scene.offsetHeight || 1; }
+    if (article) { geo.artTop = docTop(article); geo.artH = article.offsetHeight || 1; }
   };
-  lenis.on('scroll', onScroll);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+
+  const TRAVEL = 60; // footer engraving drift, px
+  let lastY = window.scrollY;
+  let scrolled = false, tucked = false;
+  let coverY = NaN, sceneY = NaN, barP = NaN;
+
+  const frame = (y: number) => {
+    // Header: solid once the page moves; tucks on a deliberate scroll down.
+    if (header) {
+      const nextScrolled = y > 24;
+      let nextTucked = tucked;
+      const menuOpen = nav?.classList.contains('open');
+      if (!menuOpen && y > 320 && y - lastY > 6) nextTucked = true;
+      else if (lastY - y > 6 || y <= 320) nextTucked = false;
+      if (Math.abs(y - lastY) > 6) lastY = y;
+      if (nextScrolled !== scrolled) header.classList.toggle('is-scrolled', (scrolled = nextScrolled));
+      if (nextTucked !== tucked) header.classList.toggle('is-tucked', (tucked = nextTucked));
+    }
+
+    // Cover parallax: the engraving trails the page at 35% of scroll speed.
+    if (coverBg && y < geo.coverBottom) {
+      const v = Math.round(y * 0.35);
+      if (v !== coverY) coverBg.style.transform = `translate3d(0, ${(coverY = v)}px, 0)`;
+    }
+
+    // Footer parallax: 0 → -60px as the footer scrolls in; lands bottom-aligned.
+    if (scene) {
+      const top = geo.sceneTop - y;
+      if (top < geo.vh) {
+        const pr = Math.min(1, Math.max(0, (geo.vh - top) / geo.sceneH));
+        const v = Math.round(-TRAVEL * pr * 10) / 10;
+        if (v !== sceneY && sceneArt) sceneArt.style.transform = `translate3d(0, ${(sceneY = v)}px, 0)`;
+      }
+    }
+
+    // Reading progress on long-form pages.
+    if (bar) {
+      const total = geo.artH - geo.vh;
+      const pr = total > 0 ? Math.min(1, Math.max(0, (y - geo.artTop) / total)) : 0;
+      const v = Math.round(pr * 1000) / 1000;
+      if (v !== barP) bar.style.transform = `scaleX(${(barP = v)})`;
+    }
+  };
+
+  measure();
+  frame(window.scrollY);
+  lenis.on('scroll', ({ scroll }: { scroll: number }) => frame(scroll));
+  window.addEventListener('resize', () => { measure(); frame(window.scrollY); });
+  // Lazy images and fonts shift layout after load; re-measure when they do.
+  new ResizeObserver(() => { measure(); frame(window.scrollY); }).observe(document.body);
 
   // Keyboard users tabbing into a tucked header must be able to see it.
-  header?.addEventListener('focusin', () => header.classList.remove('is-tucked'));
+  header?.addEventListener('focusin', () => {
+    if (tucked) header.classList.toggle('is-tucked', (tucked = false));
+  });
+
+  /* ---------- Cloud bands pause off screen ---------- */
+  const cloudIO = new IntersectionObserver((entries) => {
+    for (const e of entries) e.target.classList.toggle('is-offscreen', !e.isIntersecting);
+  });
+  document.querySelectorAll('.cloud-drift').forEach((el) => cloudIO.observe(el));
 
   /* ---------- Card spotlight ----------
      A soft light that follows the pointer across a card. Fine pointers only. */
@@ -108,41 +176,5 @@ if (!reduce) {
         card.style.setProperty('--my', `${e.clientY - r.top}px`);
       });
     });
-  }
-
-  /* ---------- Footer parallax ----------
-     The door engraving drifts up 60px as the footer scrolls into view and
-     lands exactly bottom-aligned at the end of the page. The CSS default is
-     that landed position, so without this script nothing moves. */
-  const scene = document.querySelector<HTMLElement>('.door-scene');
-  if (scene) {
-    const TRAVEL = 60;
-    const updateScene = () => {
-      const r = scene.getBoundingClientRect();
-      if (r.top > window.innerHeight || r.bottom < 0) return;
-      const p = Math.min(1, Math.max(0, (window.innerHeight - r.top) / r.height));
-      scene.style.setProperty('--scene-shift', `${(-TRAVEL * p).toFixed(1)}px`);
-    };
-    lenis.on('scroll', updateScene);
-    window.addEventListener('resize', updateScene);
-    updateScene();
-  }
-
-  /* ---------- Reading progress (long-form pages only) ---------- */
-  const article = document.querySelector<HTMLElement>('.cs-body')?.closest('article, main') as HTMLElement | null;
-  if (article) {
-    const bar = document.createElement('div');
-    bar.className = 'reading-progress';
-    bar.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(bar);
-    const update = () => {
-      const r = article.getBoundingClientRect();
-      const total = r.height - window.innerHeight;
-      const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
-      bar.style.transform = `scaleX(${p})`;
-    };
-    lenis.on('scroll', update);
-    window.addEventListener('resize', update);
-    update();
   }
 }

@@ -329,8 +329,10 @@ section {
   margin: 0 auto;
   box-sizing: border-box;
   background: var(--header-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* No backdrop-filter: a blurred fixed bar must re-blur whatever scrolls
+     beneath it on every frame, and measured, it was the largest single cause
+     of dropped frames on long pages. Over the dark engraving the translucent
+     black reads fine; once scrolled the bar goes near-opaque (.is-scrolled). */
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   padding: 14px 20px;
@@ -346,7 +348,7 @@ section {
 
 /* Scroll states, set by src/scripts/motion.ts. */
 .site-header.is-scrolled {
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.85);
 }
 
 .site-header.is-tucked {
@@ -632,17 +634,25 @@ section {
   padding-top: calc(84px + 118px);
   overflow: hidden;
   background-color: #000;
-  /* Two layers: a flat 35% black over the whole engraving, then the
-     engraving. Per-layer size and position so the parallax moves only the
-     picture — the dim layer stays pinned to the band. */
-  background-image:
+  /* Contains the layers below, so the background's z-index never competes
+     with the fixed header or anything outside the cover. */
+  isolation: isolate;
+}
+
+/* The engraving, dimmed 35%, on its own compositor layer. The parallax in
+   motion.ts moves it with transform, which the GPU does without repainting a
+   pixel; animating background-position (the old approach) repainted the whole
+   cover on every scroll frame. The engraving's top edge is black sky, so the
+   strip a downward shift uncovers is never visible. */
+.page-header-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
     linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-    url('/images/hero-clouds.jpg');
-  background-repeat: no-repeat;
-  background-size: 100% 100%, cover;
-  /* --parallax is set on scroll by PageHeader.astro; the engraving's top edge
-     is black sky, so the strip it uncovers is never visible. */
-  background-position: 0 0, center var(--parallax, 0px);
+    #000 url('/images/hero-clouds.jpg') center top / cover no-repeat;
+  will-change: transform;
+  pointer-events: none;
 }
 
 .page-header > .folio-container {
@@ -685,42 +695,63 @@ section {
   pointer-events: none;
 }
 
-/* Home intro: two banks of soft cloud drifting along the bottom edge. On the
-   text block's ::after (::before is the scrim), so they paint above the dark
-   gradient, which would otherwise swallow them, and below the type. Each
-   layer travels a whole number of its own tile widths per cycle, so the loop
-   never jumps; the farther bank moves at a third of the nearer one's speed. */
-.page-header.is-intro .page-header-text::after {
-  content: '';
+/* Drifting clouds: two banks of soft cloud, used along the bottom of the home
+   intro and the top of the footer. Each layer is a strip one tile wider than
+   its band, slid left by exactly one tile on a GPU transform, so the loop is
+   seamless and costs no repaint (the earlier background-position version
+   repainted the band every frame). The farther bank moves at roughly a third
+   of the nearer one's speed. Opacity 0.3 is measured: the intro text stays
+   above 4.5:1 against the brightest cloud at every point of the cycle. */
+.cloud-drift {
   position: absolute;
+  overflow: hidden;
+  opacity: 0.3;
+  pointer-events: none;
+  contain: strict;
+}
+
+.cloud-layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-repeat: repeat-x;
+  will-change: transform;
+}
+
+.cloud-far {
+  width: calc(100% + 1600px);
+  background-image: url('/images/intro-cloud1.webp');
+  background-size: 1600px auto;
+  background-position: 0 100%;
+}
+
+.cloud-near {
+  width: calc(100% + 2000px);
+  background-image: url('/images/intro-cloud2.webp');
+  background-size: 2000px auto;
+  background-position: 0 115%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cloud-far { animation: drift-far 140s linear infinite; }
+  .cloud-near { animation: drift-near 70s linear infinite; }
+  /* Paused while off screen (motion.ts), so nothing ticks unseen. */
+  .cloud-drift.is-offscreen .cloud-layer { animation-play-state: paused; }
+}
+
+@keyframes drift-far { to { transform: translate3d(-1600px, 0, 0); } }
+@keyframes drift-near { to { transform: translate3d(-2000px, 0, 0); } }
+
+/* Intro band: above the text scrim, below the type, full bleed. */
+.page-header-text > .cloud-drift {
   z-index: -1;
   bottom: 0;
   left: calc(50% - 50vw);
   right: calc(50% - 50vw);
   height: 300px;
-  background-image: url('/images/intro-cloud2.webp'), url('/images/intro-cloud1.webp');
-  background-repeat: repeat-x;
-  background-size: 2000px auto, 1600px auto;
-  background-position: 0 115%, 0 100%;
-  /* Measured: at 0.3 the brightest cloud behind the intro's gradient link
-     still leaves it above 4.5:1 at its darkest stop, at every point of the
-     drift cycle. Raise this and re-check. */
-  opacity: 0.3;
-  /* Soft top and bottom edges: the band dissolves into the scene above and
-     into the black section below rather than ending at a line. */
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 70%, transparent);
   mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 70%, transparent);
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .page-header.is-intro .page-header-text::after {
-    animation: clouds-drift 140s linear infinite;
-  }
-}
-
-@keyframes clouds-drift {
-  to { background-position: -4000px 115%, -1600px 100%; }
 }
 
 /* An optional image slot, standing on the text block among the clouds. */
@@ -1746,14 +1777,13 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
 .door-scene-art {
   position: absolute;
   /* 60px taller than the scene, overflowing below it, for the parallax in
-     motion.ts. --scene-shift runs 0 → -60px; the default is the landed
-     position (bottom-aligned), and the strip it opens at the top sits under
-     the scene's pure-black top gradient. */
+     motion.ts, which sets transform directly (0 → -60px). The default here is
+     the landed, bottom-aligned position, used without the script. */
   top: 0;
   left: 0;
   width: 100%;
   height: calc(100% + 60px);
-  transform: translate3d(0, var(--scene-shift, -60px), 0);
+  transform: translate3d(0, -60px, 0);
   will-change: transform;
   object-fit: cover;
   object-position: center bottom;
@@ -1764,32 +1794,20 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
 /* The intro's drifting clouds, echoed at the top of the footer so the page
    opens and closes in the same weather. z-index 1: above the black top
    gradient (::after, z 0), which would otherwise swallow them; the stage
-   with the title and door sits above at z 2. Same layers, opacity and
-   seamless loop as the intro (see .page-header.is-intro ...::after). */
-.door-scene::before {
-  content: '';
-  position: absolute;
+   with the title and door sits above at z 2. */
+.cloud-drift--footer {
   z-index: 1;
   top: 0;
   left: 0;
   right: 0;
   height: 340px;
-  background-image: url('/images/intro-cloud2.webp'), url('/images/intro-cloud1.webp');
-  background-repeat: repeat-x;
-  background-size: 2000px auto, 1600px auto;
-  background-position: 0 115%, 0 100%;
-  opacity: 0.3;
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 65%, transparent);
   mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 65%, transparent);
-  pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .door-scene::before {
-    /* Offset into the cycle so the two bands never show the same clouds. */
-    animation: clouds-drift 140s linear -60s infinite;
-  }
-}
+/* Offset into the cycle so the two bands never show the same clouds. */
+.cloud-drift--footer .cloud-far { animation-delay: -60s; }
+.cloud-drift--footer .cloud-near { animation-delay: -30s; }
 
 .door-stage {
   position: relative;
@@ -2006,17 +2024,17 @@ a.event-card:hover .event-card-body h3 { color: var(--accent); }
 /* Cover entrance: back link, eyebrow, title, intro and logos cascade in on
    load. Pure CSS, so it plays even before any script arrives. */
 @media (prefers-reduced-motion: no-preference) {
-  .page-header-text > * {
+  .page-header-text > :not(.cloud-drift) {
     animation: reveal-up 1s var(--ease-out) both;
   }
   .page-header-text > :nth-child(2) { animation-delay: 0.07s; }
   .page-header-text > :nth-child(3) { animation-delay: 0.14s; }
   .page-header-text > :nth-child(4) { animation-delay: 0.21s; }
   .page-header-text > :nth-child(5) { animation-delay: 0.28s; }
-  .page-header-text > :nth-child(n + 6) { animation-delay: 0.35s; }
+  .page-header-text > :nth-child(n + 6):not(.cloud-drift) { animation-delay: 0.35s; }
 
-  /* The scrim and engraving settle in a beat behind the type. */
-  .page-header {
+  /* The engraving settles in a beat behind the type. */
+  .page-header-bg {
     animation: cover-in 1.4s ease both;
   }
 }
