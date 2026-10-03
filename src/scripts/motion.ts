@@ -110,6 +110,24 @@ if (!reduce) {
     });
   }
 
+  /* ---------- Footer parallax ----------
+     The door engraving drifts up 60px as the footer scrolls into view and
+     lands exactly bottom-aligned at the end of the page. The CSS default is
+     that landed position, so without this script nothing moves. */
+  const scene = document.querySelector<HTMLElement>('.door-scene');
+  if (scene) {
+    const TRAVEL = 60;
+    const updateScene = () => {
+      const r = scene.getBoundingClientRect();
+      if (r.top > window.innerHeight || r.bottom < 0) return;
+      const p = Math.min(1, Math.max(0, (window.innerHeight - r.top) / r.height));
+      scene.style.setProperty('--scene-shift', `${(-TRAVEL * p).toFixed(1)}px`);
+    };
+    lenis.on('scroll', updateScene);
+    window.addEventListener('resize', updateScene);
+    updateScene();
+  }
+
   /* ---------- Reading progress (long-form pages only) ---------- */
   const article = document.querySelector<HTMLElement>('.cs-body')?.closest('article, main') as HTMLElement | null;
   if (article) {
