@@ -260,6 +260,48 @@ export function eventsGraph(base: PageBase, items: { name: string; path: string 
 }
 
 /**
+ * The resume page. The same Person, extended with what the resume states on
+ * the page itself: current employer, schooling and certifications. The PDF
+ * rides along as a DigitalDocument so engines can pair the page with it.
+ */
+export function resumeGraph(
+  base: PageBase,
+  homeName: string,
+  r: {
+    current: { org: string; role: string };
+    schools: { name: string; field: string }[];
+    credentials: { issuer: string; name: string }[];
+  }
+) {
+  return graph([
+    {
+      ...personNode(base.lang),
+      worksFor: { '@type': 'Organization', name: r.current.org },
+      alumniOf: r.schools.map((s) => ({ '@type': 'EducationalOrganization', name: s.name })),
+      hasCredential: r.credentials.map((c) => ({
+        '@type': 'EducationalOccupationalCredential',
+        name: c.name,
+        credentialCategory: 'certificate',
+        recognizedBy: { '@type': 'Organization', name: c.issuer },
+      })),
+    },
+    websiteNode(base.lang),
+    breadcrumb(base.lang, [{ name: homeName, path: '/' }, { name: base.title, path: base.path }]),
+    webPage(base, 'AboutPage', {
+      mainEntity: { '@id': PERSON_ID },
+      associatedMedia: {
+        '@type': 'DigitalDocument',
+        name: 'Oussama Bougnouch, resume (PDF)',
+        url: abs('/resume.pdf'),
+        encodingFormat: 'application/pdf',
+        inLanguage: 'en',
+        author: { '@id': PERSON_ID },
+      },
+    }),
+  ]);
+}
+
+/**
  * A single workshop.
  *
  * Emitted as an `Event` only when a real date exists — schema.org requires

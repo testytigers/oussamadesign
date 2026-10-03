@@ -351,6 +351,12 @@ section {
   background: rgba(0, 0, 0, 0.85);
 }
 
+/* motion.ts stands down under reduced motion, so nothing sets .is-scrolled:
+   keep the bar near-opaque throughout instead of see-through over text. */
+@media (prefers-reduced-motion: reduce) {
+  .site-header { background: rgba(0, 0, 0, 0.85); }
+}
+
 .site-header.is-tucked {
   transform: translateY(calc(-100% - 16px));
 }

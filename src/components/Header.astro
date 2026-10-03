@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 import LangSwitch from './LangSwitch.astro';
 import { defaultLang, localizePath, t, type Lang } from '../i18n';
@@ -35,7 +34,7 @@ const home = localizePath(lang, '/');
     <nav class="nav-links" id="nav-links">
       <a href={`${home}#work`}>{d.nav.work}</a>
       <a href={localizePath(lang, '/events')}>{d.nav.events}</a>
-      <a href="/resume.pdf" target="_blank">{d.nav.resume} <Icon name="external" /></a>
+      <a href={localizePath(lang, '/resume')} aria-current={path === '/resume' ? 'page' : undefined}>{d.nav.resume}</a>
     </nav>
 
     <div class="header-icons">

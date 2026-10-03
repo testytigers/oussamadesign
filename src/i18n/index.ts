@@ -6,6 +6,8 @@ import { caseStudyEn } from './case-study.en';
 import { caseStudyFr } from './case-study.fr';
 import { matchingEn } from './case-study-matching.en';
 import { matchingFr } from './case-study-matching.fr';
+import { resumeEn } from './resume.en';
+import { resumeFr } from './resume.fr';
 
 export const languages = {
   en: { label: 'English', short: 'EN', htmlLang: 'en' },
@@ -24,6 +26,7 @@ const dictionaries = {
   en: {
     ...en,
     eventContent: eventsEn,
+    resume: resumeEn,
     caseStudy: caseStudyEn,
     caseStudyContent: { 'wiggli-candidate-matching-case-study': matchingEn },
     /* Listing copy for every study, block-based or not. The calendar
@@ -36,6 +39,7 @@ const dictionaries = {
   fr: {
     ...fr,
     eventContent: eventsFr,
+    resume: resumeFr,
     caseStudy: caseStudyFr,
     caseStudyContent: { 'wiggli-candidate-matching-case-study': matchingFr },
     /* Listing copy for every study, block-based or not. The calendar

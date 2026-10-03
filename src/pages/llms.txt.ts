@@ -74,7 +74,8 @@ AI systems, local LLM deployment, model quantization and context management.
 ${studyLines.join('\n')}
 - [Workshops & talks](${url('/events')}): ${en.events.description}
 ${eventLines.join('\n')}
-- [Resume (PDF)](${new URL('/resume.pdf', SITE_URL).href}): full career history.
+- [Resume](${url('/resume')}): full career history as a timeline, with skills, education and certifications.
+- [Resume (PDF)](${new URL('/resume.pdf', SITE_URL).href}): the same resume as a downloadable PDF.
 
 ## French
 

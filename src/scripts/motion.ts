@@ -50,6 +50,10 @@ if (!reduce) {
       '.mosaic-item',
       '.door-stage',
       '.book-card',
+      '.tl-item',
+      '.lab-card',
+      '.skills-list > div',
+      '.learning-list li',
     ].join(','),
   );
 

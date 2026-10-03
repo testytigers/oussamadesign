@@ -1,0 +1,434 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHeader from '../PageHeader.astro';
+import Icon from '../Icon.astro';
+import { defaultLang, localizePath, t, type Lang } from '../../i18n';
+import { resumeGraph } from '../../seo/schema';
+
+interface Props { lang?: Lang }
+const { lang = defaultLang } = Astro.props;
+const d = t(lang);
+const r = d.resume;
+const PATH = '/resume';
+
+// "2025-06" → "Jun 2025" / "juin 2025".
+const month = new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const fmt = (ym: string) => month.format(new Date(`${ym}-01T00:00:00Z`));
+// French sets a space before a colon.
+const colon = lang === 'fr' ? ' :' : ':';
+
+const current = r.experience.find((job) => !job.end) ?? r.experience[0];
+const schema = resumeGraph(
+  { lang, path: PATH, title: r.metaTitle, description: r.metaDescription, image: `/images/og/home-${lang}.jpg` },
+  d.nav.work,
+  {
+    current: { org: current.org, role: current.role },
+    schools: r.education.map((e) => ({ name: e.school, field: e.field })),
+    credentials: r.certifications.map((c) => ({ issuer: c.issuer, name: c.name })),
+  }
+);
+---
+
+<Layout
+  title={r.metaTitle}
+  description={r.metaDescription}
+  image={`/images/og/home-${lang}.jpg`}
+  lang={lang}
+  path={PATH}
+  schema={schema}>
+
+  <Header lang={lang} path={PATH} />
+
+  <PageHeader eyebrow={r.eyebrow} title={r.heading}>
+    <!-- The PDF stays the first thing under the title, so it is one tap away
+         on a phone before the summary pushes anything down. -->
+    <div class="resume-actions">
+      <a class="btn btn-primary resume-download" href="/resume.pdf" download="Oussama-Bougnouch-Resume.pdf">
+        <Icon name="download" />
+        <span class="btn-label">{r.download}</span>
+      </a>
+      <span class="resume-meta">PDF · {r.downloadMeta} · {r.location}</span>
+    </div>
+    <p class="page-lede">{r.summary}</p>
+  </PageHeader>
+
+  <section class="resume-section resume-experience">
+    <div class="folio-container">
+      <div class="section-head"><h2>{r.experienceHead}</h2></div>
+
+      <ol class="timeline">
+        {r.experience.map((job) => (
+          <li class:list={['tl-item', !job.end && 'is-current']}>
+            <p class="tl-when">
+              <time datetime={job.start}>{fmt(job.start)}</time>
+              {' - '}
+              {job.end ? <time datetime={job.end}>{fmt(job.end)}</time> : r.present}
+            </p>
+
+            <div class="tl-body">
+              <h3>{job.role}</h3>
+              <p class="tl-org"><span class="tl-company">{job.org}</span> · {job.place}</p>
+
+              <ul class="tl-points">
+                {job.points.map((p) => (
+                  <li><strong>{p.lead}{colon}</strong> {p.text}</li>
+                ))}
+              </ul>
+
+              {'caseStudies' in job && job.caseStudies && (
+                <div class="tl-links">
+                  {job.caseStudies.map((slug) => (
+                    <a class="text-link" href={localizePath(lang, `/${slug}`)}>
+                      {d.caseStudyCards[slug as keyof typeof d.caseStudyCards].title}
+                      <Icon name="arrow-right" />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="resume-section">
+    <div class="folio-container">
+      <div class="section-head"><h2>{r.labHead}</h2></div>
+
+      <div class="lab-grid">
+        {r.lab.map((item) => (
+          <article class="lab-card">
+            <p class="micro-label">{item.kind} · {r.ongoing}</p>
+            <h3>{item.name}</h3>
+            <ul class="tl-points">
+              {item.points.map((p) => <li>{p}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="resume-section">
+    <div class="folio-container">
+      <div class="section-head"><h2>{r.skillsHead}</h2></div>
+
+      <dl class="skills-list">
+        {r.skills.map((s) => (
+          <div>
+            <dt>{s.area}</dt>
+            <dd>{s.items}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="resume-section resume-learning">
+    <div class="folio-container">
+      <div class="section-head"><h2>{r.learningHead}</h2></div>
+
+      <div class="learning-grid">
+        <ul class="learning-list">
+          {r.certifications.map((c) => (
+            <li>
+              <span class="learning-key">{c.issuer}</span>
+              <strong>{c.name}</strong>
+              {'note' in c && c.note && <span class="learning-note">{c.note}</span>}
+            </li>
+          ))}
+        </ul>
+
+        <ul class="learning-list">
+          {r.education.map((e) => (
+            <li>
+              <span class="learning-key"><time datetime={e.start}>{e.start}</time> - <time datetime={e.end}>{e.end}</time></span>
+              <strong>{e.school}</strong>
+              <span class="learning-note">{e.field}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Footer lang={lang} />
+</Layout>
+
+<style>
+  /* ---------- Download, under the title ---------- */
+  .resume-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 20px;
+    margin: 26px 0 30px;
+  }
+
+  .resume-download .icon {
+    width: 18px;
+    height: 18px;
+    /* The gradient's first stop: the label starts there. */
+    color: #FFE6B9;
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .resume-download:hover .icon {
+    transform: translateY(3px);
+  }
+
+  .resume-meta {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  /* ---------- Section rhythm ---------- */
+  .resume-section {
+    padding: 0 0 100px;
+  }
+
+  .resume-experience {
+    padding-top: 72px;
+  }
+
+  @media (max-width: 767px) {
+    .resume-section { padding-bottom: 64px; }
+    .resume-experience { padding-top: 48px; }
+  }
+
+  /* ---------- Timeline ----------
+     Dates in a right-aligned column, one gradient-topped rail, and a node per
+     role. The current role's node carries the gradient; the rest are hollow. */
+  .timeline {
+    --tl-date: 170px;
+    --tl-gap: 56px;
+    --tl-x: calc(var(--tl-date) + var(--tl-gap) / 2);
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: var(--tl-x);
+    width: 1px;
+    background: linear-gradient(to bottom, #6CABA1, var(--border-strong) 35%, var(--border-strong) 85%, transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--tl-date) minmax(0, 1fr);
+    column-gap: var(--tl-gap);
+    margin: 0;
+    padding-bottom: 64px;
+  }
+
+  .tl-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: calc(var(--tl-x) - 6px);
+    width: 13px;
+    height: 13px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: #000;
+  }
+
+  .tl-item.is-current::before {
+    border-color: transparent;
+    background: var(--gradient);
+    box-shadow: 0 0 0 6px rgba(108, 171, 161, 0.16);
+  }
+
+  .tl-when {
+    margin: 0;
+    padding-top: 4px;
+    text-align: right;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .is-current .tl-when {
+    color: var(--text);
+  }
+
+  .tl-body h3 {
+    margin: 0 0 6px;
+    font-size: 1.3rem;
+  }
+
+  .tl-org {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .tl-company {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .tl-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 70ch;
+  }
+
+  .tl-points li {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 170%;
+  }
+
+  .tl-points li:last-child {
+    margin-bottom: 0;
+  }
+
+  .tl-points strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .tl-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 32px;
+    margin-top: 22px;
+  }
+
+  @media (max-width: 767px) {
+    /* Rail on the left edge; the date moves above each role. */
+    .timeline {
+      --tl-x: 6px;
+    }
+
+    .tl-item {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0 0 48px 34px;
+    }
+
+    .tl-item::before {
+      top: 4px;
+    }
+
+    .tl-when {
+      padding-top: 0;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+  }
+
+  /* ---------- Independent R&D ---------- */
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .lab-card {
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+  }
+
+  .lab-card h3 {
+    margin: 0 0 18px;
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 767px) {
+    .lab-grid { grid-template-columns: minmax(0, 1fr); }
+    .lab-card { padding: 24px 22px; }
+  }
+
+  /* ---------- Skills ---------- */
+  .skills-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 56px;
+    margin: 0;
+  }
+
+  .skills-list > div {
+    padding: 22px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .skills-list dt {
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .skills-list dd {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 170%;
+  }
+
+  @media (max-width: 767px) {
+    .skills-list { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* ---------- Education & certifications ---------- */
+  .learning-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 56px;
+  }
+
+  .learning-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .learning-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 22px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .learning-list strong {
+    font-weight: 600;
+    line-height: 155%;
+  }
+
+  .learning-key {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .learning-note {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 165%;
+  }
+
+  @media (max-width: 767px) {
+    .learning-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
