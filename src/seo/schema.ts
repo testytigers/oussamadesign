@@ -290,14 +290,31 @@ const resumePdf = () => ({
 export function homeGraph(
   base: PageBase,
   opts: {
-    book?: { title: string; url: string; cover: { src: string }; pages: number; inLanguage: string };
+    book?: { title: string; url: string; cover: { src: string }; pages: number; inLanguage: string; description: string; chapters: string[] };
+    /** The blog the book is published on (uxintoax.com). */
+    blog?: { name: string; url: string; tagline: string; description: string; inLanguage: string };
     /** The resume, folded into the Person node. */
     resume?: Resume;
     /** Case study digests (src/seo/ai-profile.ts), one Article each. */
     studies?: StudyDigest[];
   } = {}
 ) {
-  const { book, resume, studies = [] } = opts;
+  const { book, blog, resume, studies = [] } = opts;
+  /* The blog as a work by the same Person, so the book, the blog and the
+     portfolio resolve to one author. */
+  const blogNode = blog
+    ? {
+        '@type': 'Blog',
+        '@id': `${blog.url}#blog`,
+        name: blog.name,
+        alternativeHeadline: blog.tagline,
+        url: blog.url,
+        description: blog.description,
+        inLanguage: blog.inLanguage,
+        author: { '@id': PERSON_ID },
+        publisher: { '@id': PERSON_ID },
+      }
+    : null;
   /* The book as a free e-book by the same Person — authorship an answer engine
      can attribute, pointing at the page where it is actually distributed. */
   const bookNode = book
@@ -306,12 +323,15 @@ export function homeGraph(
         '@id': `${book.url}#book`,
         name: book.title,
         url: book.url,
+        description: book.description,
+        abstract: `Chapters: ${book.chapters.map((c, i) => `${i + 1}. ${c}`).join('; ')}.`,
         image: abs(book.cover.src),
         author: { '@id': PERSON_ID },
         bookFormat: 'https://schema.org/EBook',
         numberOfPages: book.pages,
         inLanguage: book.inLanguage,
         isAccessibleForFree: true,
+        ...(blog ? { publisher: { '@id': PERSON_ID }, isPartOf: { '@id': `${blog.url}#blog` } } : {}),
       }
     : null;
 
@@ -345,6 +365,7 @@ export function homeGraph(
     websiteNode(base.lang),
     ...clientNodes(),
     ...(bookNode ? [bookNode] : []),
+    ...(blogNode ? [blogNode] : []),
     ...studyNodes,
     ...labs,
     ...(resume ? [resumePdf()] : []),
@@ -354,6 +375,7 @@ export function homeGraph(
       mentions: [
         ...clientRefs(),
         ...(bookNode ? [{ '@id': bookNode['@id'] }] : []),
+        ...(blogNode ? [{ '@id': blogNode['@id'] }] : []),
         ...labs.map((n) => ({ '@id': n['@id'] })),
       ],
       ...(resume ? { associatedMedia: { '@id': `${SITE_URL}/resume.pdf#document` } } : {}),

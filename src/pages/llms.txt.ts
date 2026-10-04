@@ -14,6 +14,7 @@ import { t, locales } from '../i18n';
 import { events } from '../data/events';
 import { caseStudies } from '../data/case-studies';
 import { SITE_URL, canonicalUrl } from '../seo/schema';
+import { book, blog } from '../data/book';
 
 export const GET: APIRoute = () => {
   const en = t('en');
@@ -47,7 +48,14 @@ export const GET: APIRoute = () => {
 - Languages: English, French
 - Site languages: ${locales.map((l) => l.toUpperCase()).join(', ')} (English at the root, French under /fr/)
 - Contact: musamathemes@gmail.com, +212 698 996 201, and LinkedIn https://www.linkedin.com/in/oussamabougnouch/
-- Writing: https://medium.com/@oussama_bougnouch
+- Blog: ${blog.name} (${blog.url}), "${blog.tagline}"
+- Book: ${book.title}, a free AI book for UX designers (${book.url})
+- Also writes on Medium: https://medium.com/@oussama_bougnouch
+
+## Book and blog
+
+- [${book.title}](${book.url}): ${book.description} ${book.chapters.length} chapters, ${book.pages} pages, free PDF by email.
+- [${blog.name}](${blog.url}): ${blog.description}
 
 ## Selected results
 

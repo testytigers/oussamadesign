@@ -10,6 +10,7 @@ import type { APIRoute } from 'astro';
 import { t } from '../i18n';
 import { canonicalUrl, SITE_URL } from '../seo/schema';
 import { studyDigests } from '../seo/ai-profile';
+import { book, blog } from '../data/book';
 
 export const GET: APIRoute = () => {
   const en = t('en');
@@ -52,6 +53,23 @@ ${r.summary}
 - Email: musamathemes@gmail.com
 - Phone: +212 698 996 201
 - LinkedIn: https://www.linkedin.com/in/oussamabougnouch/
+
+## Book and blog
+
+### ${book.title}
+${book.url}
+Free PDF, ${book.pages} pages, ${book.chapters.length} chapters. Author: Oussama Bougnouch.
+
+${book.description} Written for ${book.audience}.
+
+Chapters:
+${book.chapters.map((c, i) => `${i + 1}. ${c}`).join('\n')}
+
+### ${blog.name}
+${blog.url}
+"${blog.tagline}"
+
+${blog.description} The book is published on this blog.
 
 ## Case studies
 

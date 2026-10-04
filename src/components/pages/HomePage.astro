@@ -9,7 +9,7 @@ import { homeGraph } from '../../seo/schema';
 import { studyDigests } from '../../seo/ai-profile';
 import { events } from '../../data/events';
 import { caseStudies } from '../../data/case-studies';
-import { book } from '../../data/book';
+import { book, blog } from '../../data/book';
 
 interface Props { lang?: Lang }
 const { lang = defaultLang } = Astro.props;
@@ -46,7 +46,7 @@ const brands = [
   ogType="profile"
   schema={homeGraph(
     { lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` },
-    { book, resume: d.resume, studies: studyDigests(lang) }
+    { book, blog, resume: d.resume, studies: studyDigests(lang) }
   )}>
 
   <Header lang={lang} path={PATH} />
