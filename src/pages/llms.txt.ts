@@ -32,14 +32,16 @@ export const GET: APIRoute = () => {
 
   const body = `# Oussama Bougnouch
 
-> Senior UX Designer and AI system builder based in Rabat, Morocco. 15+ years
-> designing enterprise products, most recently combining product UX with
-> hands-on work on local LLMs and agentic AI systems.
+> Principal UX Designer and Product Architect based in Rabat, Morocco. 15+ years
+> across B2B SaaS, marketplaces and enterprise products, combining product UX
+> with conversational and agentic AI design.
+>
+> Full resume and case study digests in one file: ${new URL('/llms-full.txt', SITE_URL).href}
 
 ## Facts
 
 - Full name: Oussama Bougnouch
-- Role: Senior UX Designer & AI System Builder
+- Role: Principal UX Designer & Product Architect, currently at Sobrus
 - Location: Rabat, Morocco
 - Experience: 15+ years
 - Languages: English, French
@@ -55,7 +57,7 @@ export const GET: APIRoute = () => {
 - Post-task usability survey scored 7.6/10; tracked across 50+ active recruiters.
 - Wiggli candidate matching: screening time down 65% for power users, 40% for regular users.
 - Wiggli candidate matching: six-pillar explainable scoring model, built on a survey of 243 hiring clients.
-- Scaled a B2B marketplace 9x.
+- Sobrus: scaled marketplace orders 9x year-over-year by simplifying the procurement flow.
 
 ## Organisations worked with
 

@@ -6,6 +6,7 @@ import PageHeader from '../PageHeader.astro';
 import Icon from '../Icon.astro';
 import { defaultLang, localizePath, t, type Lang } from '../../i18n';
 import { homeGraph } from '../../seo/schema';
+import { studyDigests } from '../../seo/ai-profile';
 import { events } from '../../data/events';
 import { caseStudies } from '../../data/case-studies';
 import { book } from '../../data/book';
@@ -43,7 +44,10 @@ const brands = [
   lang={lang}
   path={PATH}
   ogType="profile"
-  schema={homeGraph({ lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` }, book)}>
+  schema={homeGraph(
+    { lang, path: PATH, title: d.home.title, description: d.home.description, image: `/images/og/home-${lang}.jpg` },
+    { book, resume: d.resume, studies: studyDigests(lang) }
+  )}>
 
   <Header lang={lang} path={PATH} />
 

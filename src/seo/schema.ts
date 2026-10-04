@@ -11,6 +11,10 @@
  * asserted that a reader could not verify on the page itself.
  */
 import { localizePath, type Lang } from '../i18n';
+import type { resumeEn } from '../i18n/resume.en';
+import type { StudyDigest } from './ai-profile';
+
+type Resume = typeof resumeEn;
 
 export const SITE_URL = 'https://oussamadesign.github.io';
 export const abs = (path: string) => new URL(path, SITE_URL).href;
@@ -39,16 +43,16 @@ const MEDIUM = 'https://medium.com/@oussama_bougnouch';
    visible text never drift apart — engines penalise the mismatch. */
 const profile = {
   en: {
-    jobTitle: 'Senior UX Designer & AI System Builder',
+    jobTitle: 'Principal UX Designer & Product Architect',
     description:
-      'Senior UX Designer and AI system builder based in Rabat, Morocco, with 15+ years designing enterprise products. Cut candidate dropout by 70% and scaled a B2B marketplace 9x at Wiggli; has worked with CHANEL, AT&T, Fnac and Carrefour.',
+      'Principal UX Designer and Product Architect based in Rabat, Morocco, with 15+ years across B2B SaaS, marketplaces and enterprise products. Scaled marketplace orders 9x at Sobrus and cut candidate dropout from 40% to 12% at Gentis (Wiggli); has worked with CHANEL, AT&T, Fnac and Carrefour.',
     occupation: 'UX Designer',
     country: 'Morocco',
   },
   fr: {
-    jobTitle: 'UX Designer senior & concepteur de systèmes IA',
+    jobTitle: 'Principal UX Designer & architecte produit',
     description:
-      "UX Designer senior et concepteur de systèmes IA basé à Rabat, au Maroc, avec plus de 15 ans d'expérience en produits d'entreprise. A réduit l'abandon des candidats de 70 % et fait croître une marketplace B2B x9 chez Wiggli ; a travaillé avec CHANEL, AT&T, Fnac et Carrefour.",
+      "Principal UX Designer et architecte produit basé à Rabat, au Maroc, avec plus de 15 ans en SaaS B2B, marketplaces et produits d'entreprise. A multiplié par 9 les commandes de la marketplace chez Sobrus et ramené l'abandon des candidats de 40 % à 12 % chez Gentis (Wiggli) ; a travaillé avec CHANEL, AT&T, Fnac et Carrefour.",
     occupation: 'UX Designer',
     country: 'Maroc',
   },
@@ -72,6 +76,11 @@ const KNOWS_ABOUT = [
   'Large Language Models',
   'Local LLM Deployment',
   'Model Quantization',
+  'Conversational AI Design',
+  'Model Context Protocol (MCP)',
+  'Design Systems Architecture',
+  'Product Strategy',
+  'Conversion Rate Optimization',
 ];
 
 /* Named on the home page logo strip. Declaring them as real Organization
@@ -208,11 +217,87 @@ function webPage(base: PageBase, type: string, extra: Record<string, unknown> = 
   };
 }
 
+/**
+ * The whole resume as Person properties, so an engine reading any page that
+ * carries it gets the career, not just the headline. Schema.org's Role
+ * pattern: each employer sits inside an EmployeeRole that holds the title,
+ * the dates and what was done there. Everything here is on /resume verbatim.
+ */
+function careerFields(r: Resume) {
+  const did = (job: Resume['experience'][number]) => job.points.map((p) => `${p.lead}: ${p.text}`).join(' ');
+  const [current, ...past] = r.experience;
+  return {
+    description: r.summary,
+    worksFor: {
+      '@type': 'EmployeeRole',
+      roleName: current.role,
+      startDate: current.start,
+      description: did(current),
+      worksFor: { '@type': 'Organization', name: current.org, location: current.place },
+    },
+    alumniOf: [
+      ...past.map((job) => ({
+        '@type': 'EmployeeRole',
+        roleName: job.role,
+        startDate: job.start,
+        endDate: job.end ?? undefined,
+        description: did(job),
+        alumniOf: { '@type': 'Organization', name: job.org, location: job.place },
+      })),
+      ...r.education.map((e) => ({
+        '@type': 'OrganizationRole',
+        roleName: e.field,
+        startDate: e.start,
+        endDate: e.end,
+        alumniOf: { '@type': 'EducationalOrganization', name: e.school },
+      })),
+    ],
+    hasCredential: r.certifications.map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      name: c.name,
+      description: 'note' in c ? c.note : undefined,
+      credentialCategory: 'certificate',
+      recognizedBy: { '@type': 'Organization', name: c.issuer },
+    })),
+    skills: r.skills.map((sk) => `${sk.area}: ${sk.items}`),
+  };
+}
+
+/** The independent AI projects from the resume, as works by the Person. */
+const labNodes = (r: Resume) =>
+  r.lab.map((item) => ({
+    '@type': 'CreativeWork',
+    '@id': `${SITE_URL}/#lab-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    name: item.name,
+    genre: item.kind,
+    description: item.points.join(' '),
+    creativeWorkStatus: r.ongoing,
+    creator: { '@id': PERSON_ID },
+  }));
+
+/** The resume PDF, so engines can pair the pages with the download. */
+const resumePdf = () => ({
+  '@type': 'DigitalDocument',
+  '@id': `${SITE_URL}/resume.pdf#document`,
+  name: 'Oussama Bougnouch, resume (PDF)',
+  url: abs('/resume.pdf'),
+  encodingFormat: 'application/pdf',
+  inLanguage: 'en',
+  author: { '@id': PERSON_ID },
+});
+
 /** Home — a ProfilePage, the type answer engines use for "who is X". */
 export function homeGraph(
   base: PageBase,
-  book?: { title: string; url: string; cover: { src: string }; pages: number; inLanguage: string }
+  opts: {
+    book?: { title: string; url: string; cover: { src: string }; pages: number; inLanguage: string };
+    /** The resume, folded into the Person node. */
+    resume?: Resume;
+    /** Case study digests (src/seo/ai-profile.ts), one Article each. */
+    studies?: StudyDigest[];
+  } = {}
 ) {
+  const { book, resume, studies = [] } = opts;
   /* The book as a free e-book by the same Person — authorship an answer engine
      can attribute, pointing at the page where it is actually distributed. */
   const bookNode = book
@@ -229,13 +314,49 @@ export function homeGraph(
         isAccessibleForFree: true,
       }
     : null;
+
+  /* Each case study under the same @id its own page gives its Article, so the
+     digest here and the full study resolve to one entity. The abstract and
+     key results are lifted from the study's own text. */
+  const studyNodes = studies.map((st) => ({
+    '@type': 'Article',
+    '@id': `${canonicalUrl(base.lang, st.path)}#article`,
+    headline: st.title,
+    url: canonicalUrl(base.lang, st.path),
+    description: st.description,
+    abstract: `${st.abstract} ${st.resultsLabel}: ${st.keyResults.join('; ')}.`,
+    inLanguage: base.lang === 'fr' ? 'fr-FR' : 'en',
+    author: { '@id': PERSON_ID },
+    creditText: st.role,
+    about: st.topics,
+    keywords: st.topics.join(', '),
+    mentions: [
+      { '@type': 'Organization', name: st.client },
+      ...(st.product ? [{ '@type': 'SoftwareApplication', name: st.product.name, url: st.product.url }] : []),
+    ],
+    ...(st.product ? { citation: st.product.url } : {}),
+  }));
+
+  const labs = resume ? labNodes(resume) : [];
+  const person = resume ? { ...personNode(base.lang), ...careerFields(resume) } : personNode(base.lang);
+
   return graph([
-    ...common(base.lang),
+    person,
+    websiteNode(base.lang),
     ...clientNodes(),
     ...(bookNode ? [bookNode] : []),
+    ...studyNodes,
+    ...labs,
+    ...(resume ? [resumePdf()] : []),
     webPage(base, 'ProfilePage', {
       mainEntity: { '@id': PERSON_ID },
-      mentions: [...clientRefs(), ...(bookNode ? [{ '@id': bookNode['@id'] }] : [])],
+      hasPart: studyNodes.map((n) => ({ '@id': n['@id'] })),
+      mentions: [
+        ...clientRefs(),
+        ...(bookNode ? [{ '@id': bookNode['@id'] }] : []),
+        ...labs.map((n) => ({ '@id': n['@id'] })),
+      ],
+      ...(resume ? { associatedMedia: { '@id': `${SITE_URL}/resume.pdf#document` } } : {}),
     }),
   ]);
 }
@@ -260,43 +381,19 @@ export function eventsGraph(base: PageBase, items: { name: string; path: string 
 }
 
 /**
- * The resume page. The same Person, extended with what the resume states on
- * the page itself: current employer, schooling and certifications. The PDF
- * rides along as a DigitalDocument so engines can pair the page with it.
+ * The resume page. The same Person, with the full career from the page folded
+ * in (see careerFields), the AI projects, and the PDF as a DigitalDocument.
  */
-export function resumeGraph(
-  base: PageBase,
-  homeName: string,
-  r: {
-    current: { org: string; role: string };
-    schools: { name: string; field: string }[];
-    credentials: { issuer: string; name: string }[];
-  }
-) {
+export function resumeGraph(base: PageBase, homeName: string, r: Resume) {
   return graph([
-    {
-      ...personNode(base.lang),
-      worksFor: { '@type': 'Organization', name: r.current.org },
-      alumniOf: r.schools.map((s) => ({ '@type': 'EducationalOrganization', name: s.name })),
-      hasCredential: r.credentials.map((c) => ({
-        '@type': 'EducationalOccupationalCredential',
-        name: c.name,
-        credentialCategory: 'certificate',
-        recognizedBy: { '@type': 'Organization', name: c.issuer },
-      })),
-    },
+    { ...personNode(base.lang), ...careerFields(r) },
     websiteNode(base.lang),
+    ...labNodes(r),
+    resumePdf(),
     breadcrumb(base.lang, [{ name: homeName, path: '/' }, { name: base.title, path: base.path }]),
     webPage(base, 'AboutPage', {
       mainEntity: { '@id': PERSON_ID },
-      associatedMedia: {
-        '@type': 'DigitalDocument',
-        name: 'Oussama Bougnouch, resume (PDF)',
-        url: abs('/resume.pdf'),
-        encodingFormat: 'application/pdf',
-        inLanguage: 'en',
-        author: { '@id': PERSON_ID },
-      },
+      associatedMedia: { '@id': `${SITE_URL}/resume.pdf#document` },
     }),
   ]);
 }

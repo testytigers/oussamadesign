@@ -19,15 +19,10 @@ const fmt = (ym: string) => month.format(new Date(`${ym}-01T00:00:00Z`));
 // French sets a space before a colon.
 const colon = lang === 'fr' ? ' :' : ':';
 
-const current = r.experience.find((job) => !job.end) ?? r.experience[0];
 const schema = resumeGraph(
   { lang, path: PATH, title: r.metaTitle, description: r.metaDescription, image: `/images/og/home-${lang}.jpg` },
   d.nav.work,
-  {
-    current: { org: current.org, role: current.role },
-    schools: r.education.map((e) => ({ name: e.school, field: e.field })),
-    credentials: r.certifications.map((c) => ({ issuer: c.issuer, name: c.name })),
-  }
+  r
 );
 ---
 
