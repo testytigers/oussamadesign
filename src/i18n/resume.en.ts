@@ -149,6 +149,8 @@ export const resumeEn = {
 
   learningHead: 'Education & certifications',
   education: [
+    { school: 'IMBT', field: 'Application Architecture and Development Engineering (Master)', start: '2020', end: '2022' },
+    { school: 'Miage Group', field: 'Software Development (Bachelor)', start: '2015', end: '2016' },
     { school: 'Moulik Group', field: 'Information Technology', start: '2011', end: '2013' },
     { school: 'FSJES University', field: 'Economics & Finance (BAC+2)', start: '2010', end: '2012' },
     { school: 'Mohamed VI High School', field: 'Accountancy & Management (Baccalaureate)', start: '2008', end: '2009' },

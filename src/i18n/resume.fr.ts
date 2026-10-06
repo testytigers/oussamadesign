@@ -147,6 +147,8 @@ export const resumeFr: typeof resumeEn = {
 
   learningHead: 'Formation et certifications',
   education: [
+    { school: 'IMBT', field: "Ingénierie de l'architecture et du développement d'applications (master)", start: '2020', end: '2022' },
+    { school: 'Miage Group', field: 'Développement logiciel (licence)', start: '2015', end: '2016' },
     { school: 'Moulik Group', field: "Technologies de l'information", start: '2011', end: '2013' },
     { school: 'Université FSJES', field: 'Économie et finance (BAC+2)', start: '2010', end: '2012' },
     { school: 'Lycée Mohamed VI', field: 'Comptabilité et gestion (baccalauréat)', start: '2008', end: '2009' },
